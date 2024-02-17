@@ -155,7 +155,6 @@ class MinPQ:
         self.sink(0)
         return deleted
 
-
 class TestMaxHeapPQ(unittest.TestCase):
     def setUp(self) -> None:
         max_length = 5
@@ -336,10 +335,6 @@ class Graph:
             ind_vs.remove(remove_key)
         print(ind_vs)
         return ind_vs
-    
-        
-
-
 
 class TestingGraphFuncs(unittest.TestCase):
     def setUp(self) -> None:
@@ -393,6 +388,25 @@ class TestingGraphFuncs(unittest.TestCase):
         ind_vs = self.g.find_ind_set()
         self.assertTrue(self.g.is_indep_set(ind_vs))
 
-    
 if __name__ == '__main__':
     unittest.main()
+
+def create_random_graph(n,e): #by Sota
+    g = Graph([])
+    graph = g.get_graph()
+    for i in range(n):
+        g.add_node(i)
+    for _ in range(e):
+        n1 = random.randint(0,n-1)
+        n2 = random.randint(0,n-1)
+        while n1 == n2 or n2 in graph[n1]:  # n1 and n2 are different
+            n1 = random.randint(0,n-1)
+            n2 = random.randint(0,n-1)
+        g.add_edge(n1,n2)
+    return g
+
+def performance_approxs():
+    e = {1,5,10,15,20}
+    for e_num in e:
+        for trial in range(20):
+            "todo"
