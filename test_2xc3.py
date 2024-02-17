@@ -451,6 +451,8 @@ def draw_2_graphs(y1, y2, title):
     plt.legend()
     plt.show()
 
+#2.6
+
 def mvc_mis_relation(_v_num):
     v = _v_num
     mvc_scales = mvc_lens(v)
@@ -459,4 +461,9 @@ def mvc_mis_relation(_v_num):
 
 mvc_mis_relation(30)
 
-        
+# 2.7 reflection:
+# The length of min vertex cover and max independent set is proportional in relation. And they are both inversely proportional to number of edges.
+# Intuitively, we use max priority queue on degree of vertex in both case to collect min vertex cover and max independent set. 
+# Because a vertex with hiegher degree is more likely to cover more edges, which should be included earlier in vertex cover and
+# excluded earlier in independent set. In an arbitrary graph, if we gradually increase the number of edge that is distributed arbitrarily,
+# there'll be less vertex needed to cover all the edges. Meanwhile, less vertex available in a set that commonly not connected to each other.
