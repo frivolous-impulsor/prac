@@ -1,23 +1,9 @@
 import random
 import unittest
-
-class Stack:
-    s = []
-    def __init__(self):
-        self.s = []
-
-    def push(self, item):
-        self.s.append(item)
-    
-    def pop(self):
-        if len(self.s) == 0:
-            raise Exception("stack empty! No more popping.")
-        upper = self.s[-1]
-        self.s = self.s[:-1]
-        return upper
-    
-    def is_stack_empty(self):
-        return len(self.s) == 0
+import math
+from mpl_toolkits import mplot3d
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 class Tree:
@@ -231,6 +217,15 @@ class Graph:
         self.v_num = 0
         self.e_num = 0
         self.graph = {}
+    
+    def add_ver(self, v: any):
+        g_dict = self.graph
+        g_dict[v] = []
+
+    def add_vers(self, vers: list[any]):
+        g_dict = self.graph
+        for v in vers:
+            g_dict[v] = []
 
     def add_edge(self, edge: list[int]):
         if isinstance(edge[0], list) or len(edge) != 2: raise ValueError("edge is of form: [a, b]")
@@ -323,7 +318,7 @@ class Graph:
     
     def find_ind_set(self):
         ind_vs = set(self.graph.keys())
-        degree_pq = MaxPQ(self.e_num)
+        degree_pq = MaxPQ(300)
         g_dict = self.graph
         for key in g_dict.keys():
             degree = len(g_dict[key])
@@ -333,7 +328,6 @@ class Graph:
             high_d_node = degree_pq.delete_max()
             remove_key = high_d_node.key
             ind_vs.remove(remove_key)
-        print(ind_vs)
         return ind_vs
 
 class TestingGraphFuncs(unittest.TestCase):
@@ -342,6 +336,22 @@ class TestingGraphFuncs(unittest.TestCase):
         self.edge = ['a', 'b']
         self.edges = [['a', 'b'], ['a', 'c'], ['b', 'a'], ['b', 'c'], ['c', 'a'], ['c', 'b'], ['c', 'e'], ['e', 'c']]
         return super().setUp()
+    
+    def test_add_v(self):
+        self.g.add_ver('v')
+        self.g.add_ver('m')
+        self.g.add_ver('w')
+        self.assertEqual(self.g.graph, {'v': [],
+                                        'm': [],
+                                        'w': []})
+        
+    def test_add_vs(self):
+        self.g.add_vers(['v', 'm', 'w'])
+        self.assertEqual(self.g.graph, {'v': [],
+                                        'm': [],
+                                        'w': []})
+        
+
     def test_add_edge(self):
         self.g.add_edge(self.edge)
         g = self.g.graph
@@ -388,25 +398,65 @@ class TestingGraphFuncs(unittest.TestCase):
         ind_vs = self.g.find_ind_set()
         self.assertTrue(self.g.is_indep_set(ind_vs))
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
 
 def create_random_graph(n,e): #by Sota
-    g = Graph([])
-    graph = g.get_graph()
-    for i in range(n):
-        g.add_node(i)
+    e = math.ceil(e/2)
+    g_object = Graph()
+    g_dict = g_object.graph
+    for v in range(n):
+        g_object.add_ver(v)
     for _ in range(e):
-        n1 = random.randint(0,n-1)
-        n2 = random.randint(0,n-1)
-        while n1 == n2 or n2 in graph[n1]:  # n1 and n2 are different
-            n1 = random.randint(0,n-1)
-            n2 = random.randint(0,n-1)
-        g.add_edge(n1,n2)
-    return g
+        u = random.randint(0,n-1)
+        v = random.randint(0,n-1)
+        while u == v or u in g_dict[v]:  # n1 and n2 are different
+            u = random.randint(0,n-1)
+            v = random.randint(0,n-1)
+        g_object.add_edge([u, v])
+    return g_object
 
-def performance_approxs():
-    e = {1,5,10,15,20}
-    for e_num in e:
-        for trial in range(20):
-            "todo"
+
+
+def mvc_lens(v_num):
+    trial = 200
+    lens = [0 for i in range(trial)]
+    for i in range(trial):
+        e_num = i * 2 + 1
+        g_obj = create_random_graph(v_num, e_num)
+        len_mvc = g_obj.approx1()
+        lens[i] = len(len_mvc)
+    return lens
+
+def mis_lens(v_num):
+    trial = 200
+    lens = [0 for i in range(trial)]
+    for i in range(trial):
+        e_num = i * 2 + 1
+        g_obj = create_random_graph(v_num, e_num)
+        len_mis = g_obj.find_ind_set()
+        lens[i] = len(len_mis)
+    return lens
+
+def draw_2_graphs(y1, y2, title):
+    if not (len(y1) == len(y2)):
+        raise ValueError("y1 and y2 should have same length for plotting")
+    x_values = [i for i in range(len(y1))]
+    plt.figure()
+    plt.plot(x_values, y1, label='mvc_scale', marker='o')
+    plt.plot(x_values, y2, label='mis_scale', marker='s')
+    plt.xlabel('number of edges')
+    plt.ylabel('number of elements in set')
+    plt.title(title)
+    plt.legend()
+    plt.show()
+
+def mvc_mis_relation(_v_num):
+    v = _v_num
+    mvc_scales = mvc_lens(v)
+    mis_scales = mis_lens(v)
+    draw_2_graphs(mvc_scales, mis_scales, "somehting")
+
+mvc_mis_relation(30)
+
+        
