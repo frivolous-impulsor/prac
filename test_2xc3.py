@@ -287,8 +287,8 @@ class Graph:
             high_d_v = degree_pq.delete_max().key
             covering_vs.add(high_d_v)
         return covering_vs
-        
     
+        
     def approx3(self):
         covering_vs = set()
         edges = self.get_edges()
@@ -467,3 +467,4 @@ mvc_mis_relation(30)
 # Because a vertex with hiegher degree is more likely to cover more edges, which should be included earlier in vertex cover and
 # excluded earlier in independent set. In an arbitrary graph, if we gradually increase the number of edge that is distributed arbitrarily,
 # there'll be less vertex needed to cover all the edges. Meanwhile, less vertex available in a set that commonly not connected to each other.
+
