@@ -294,16 +294,21 @@ class Graph:
         edges = self.get_edges()
         length = len(edges)
         pick_i = [x for x in range(length)]
+        print(edges)
         random.shuffle(pick_i)
         current_i = 0
         
         while not self.is_vc(covering_vs):
-            rand_edge = edges[pick_i[current_i]]
+            print(current_i)
+            rand_e_index = pick_i[current_i]
+            rand_edge = edges[rand_e_index]
             current_i +=1
+
             u = rand_edge[0]
             v = rand_edge[1]
             covering_vs.add(u)
             covering_vs.add(v)
+            print(covering_vs)
         return covering_vs
     
     def is_indep_set(self, ind_set: set):
@@ -416,23 +421,21 @@ def create_random_graph(n,e): #by Sota
         g_object.add_edge([u, v])
     return g_object
 
-
-
 def mvc_lens(v_num):
-    trial = 200
+    trial = 20
     lens = [0 for i in range(trial)]
     for i in range(trial):
-        e_num = i * 2 + 1
+        e_num = i * 5 + 3
         g_obj = create_random_graph(v_num, e_num)
         len_mvc = g_obj.approx1()
         lens[i] = len(len_mvc)
     return lens
 
 def mis_lens(v_num):
-    trial = 200
+    trial = 20
     lens = [0 for i in range(trial)]
     for i in range(trial):
-        e_num = i * 2 + 1
+        e_num = i * 5 + 3
         g_obj = create_random_graph(v_num, e_num)
         len_mis = g_obj.find_ind_set()
         lens[i] = len(len_mis)
@@ -461,10 +464,6 @@ def mvc_mis_relation(_v_num):
 
 mvc_mis_relation(30)
 
-# 2.7 reflection:
-# The length of min vertex cover and max independent set is proportional in relation. And they are both inversely proportional to number of edges.
-# Intuitively, we use max priority queue on degree of vertex in both case to collect min vertex cover and max independent set. 
-# Because a vertex with hiegher degree is more likely to cover more edges, which should be included earlier in vertex cover and
-# excluded earlier in independent set. In an arbitrary graph, if we gradually increase the number of edge that is distributed arbitrarily,
-# there'll be less vertex needed to cover all the edges. Meanwhile, less vertex available in a set that commonly not connected to each other.
-
+g = Graph()
+g.add_edges([[10, 14], [14, 10]])
+print(g.approx3())
