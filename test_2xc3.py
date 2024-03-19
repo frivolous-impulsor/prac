@@ -141,72 +141,72 @@ class MinPQ:
         self.sink(0)
         return deleted
 
-class TestMaxHeapPQ(unittest.TestCase):
-    def setUp(self) -> None:
-        max_length = 5
-        self.pq = MaxPQ(max_length)
-        return super().setUp()
-    def test_put(self):
-        a = Node('a', 5)
-        b = Node('b', 1)
-        w = Node('w', 10)
-        z = Node('z', 3)
-        p = Node('p', 6)
-        self.pq.put(a)
-        self.pq.put(b)
-        self.pq.put(w)
-        self.pq.put(z)
-        self.pq.put(p)
-        pq_value = []
-        for i in range(self.pq.n):
-            pq_value.append(self.pq.degrees[i].value)
-        self.assertEqual(pq_value, [10, 6, 5, 1, 3])
-    def test_delete_max(self):
-        a = Node('a', 5)
-        b = Node('b', 1)
-        w = Node('w', 10)
-        z = Node('z', 3)
-        p = Node('p', 6)
-        self.pq.put(a)
-        self.pq.put(b)
-        self.pq.put(w)
-        self.pq.put(z)
-        self.pq.put(p)
-        max_degree = self.pq.delete_max()
-        self.assertEqual(max_degree.value, 10)
-class TestMinHeapPQ(unittest.TestCase):
-    def setUp(self) -> None:
-        max_length = 5
-        self.pq = MinPQ(max_length)
-        return super().setUp()
-    def test_put(self):
-        a = Node('a', 5)
-        b = Node('b', 1)
-        w = Node('w', 10)
-        z = Node('z', 3)
-        p = Node('p', 6)
-        self.pq.put(a)
-        self.pq.put(b)
-        self.pq.put(w)
-        self.pq.put(z)
-        self.pq.put(p)
-        pq_value = []
-        for i in range(self.pq.n):
-            pq_value.append(self.pq.degrees[i].value)
-        self.assertEqual(pq_value, [1,3,10,5,6])
-    def test_delete_min(self):
-        a = Node('a', 5)
-        b = Node('b', 1)
-        w = Node('w', 10)
-        z = Node('z', 3)
-        p = Node('p', 6)
-        self.pq.put(a)
-        self.pq.put(b)
-        self.pq.put(w)
-        self.pq.put(z)
-        self.pq.put(p)
-        max_degree = self.pq.delete_min()
-        self.assertEqual(max_degree.value, 1)
+# class TestMaxHeapPQ(unittest.TestCase):
+#     def setUp(self) -> None:
+#         max_length = 5
+#         self.pq = MaxPQ(max_length)
+#         return super().setUp()
+#     def test_put(self):
+#         a = Node('a', 5)
+#         b = Node('b', 1)
+#         w = Node('w', 10)
+#         z = Node('z', 3)
+#         p = Node('p', 6)
+#         self.pq.put(a)
+#         self.pq.put(b)
+#         self.pq.put(w)
+#         self.pq.put(z)
+#         self.pq.put(p)
+#         pq_value = []
+#         for i in range(self.pq.n):
+#             pq_value.append(self.pq.degrees[i].value)
+#         self.assertEqual(pq_value, [10, 6, 5, 1, 3])
+#     def test_delete_max(self):
+#         a = Node('a', 5)
+#         b = Node('b', 1)
+#         w = Node('w', 10)
+#         z = Node('z', 3)
+#         p = Node('p', 6)
+#         self.pq.put(a)
+#         self.pq.put(b)
+#         self.pq.put(w)
+#         self.pq.put(z)
+#         self.pq.put(p)
+#         max_degree = self.pq.delete_max()
+#         self.assertEqual(max_degree.value, 10)
+# class TestMinHeapPQ(unittest.TestCase):
+#     def setUp(self) -> None:
+#         max_length = 5
+#         self.pq = MinPQ(max_length)
+#         return super().setUp()
+#     def test_put(self):
+#         a = Node('a', 5)
+#         b = Node('b', 1)
+#         w = Node('w', 10)
+#         z = Node('z', 3)
+#         p = Node('p', 6)
+#         self.pq.put(a)
+#         self.pq.put(b)
+#         self.pq.put(w)
+#         self.pq.put(z)
+#         self.pq.put(p)
+#         pq_value = []
+#         for i in range(self.pq.n):
+#             pq_value.append(self.pq.degrees[i].value)
+#         self.assertEqual(pq_value, [1,3,10,5,6])
+#     def test_delete_min(self):
+#         a = Node('a', 5)
+#         b = Node('b', 1)
+#         w = Node('w', 10)
+#         z = Node('z', 3)
+#         p = Node('p', 6)
+#         self.pq.put(a)
+#         self.pq.put(b)
+#         self.pq.put(w)
+#         self.pq.put(z)
+#         self.pq.put(p)
+#         max_degree = self.pq.delete_min()
+#         self.assertEqual(max_degree.value, 1)
 
 
 class Graph:
@@ -335,73 +335,73 @@ class Graph:
             ind_vs.remove(remove_key)
         return ind_vs
 
-class TestingGraphFuncs(unittest.TestCase):
-    def setUp(self) -> None:
-        self.g = Graph()
-        self.edge = ['a', 'b']
-        self.edges = [['a', 'b'], ['a', 'c'], ['b', 'a'], ['b', 'c'], ['c', 'a'], ['c', 'b'], ['c', 'e'], ['e', 'c']]
-        return super().setUp()
+# class TestingGraphFuncs(unittest.TestCase):
+#     def setUp(self) -> None:
+#         self.g = Graph()
+#         self.edge = ['a', 'b']
+#         self.edges = [['a', 'b'], ['a', 'c'], ['b', 'a'], ['b', 'c'], ['c', 'a'], ['c', 'b'], ['c', 'e'], ['e', 'c']]
+#         return super().setUp()
     
-    def test_add_v(self):
-        self.g.add_ver('v')
-        self.g.add_ver('m')
-        self.g.add_ver('w')
-        self.assertEqual(self.g.graph, {'v': [],
-                                        'm': [],
-                                        'w': []})
+#     def test_add_v(self):
+#         self.g.add_ver('v')
+#         self.g.add_ver('m')
+#         self.g.add_ver('w')
+#         self.assertEqual(self.g.graph, {'v': [],
+#                                         'm': [],
+#                                         'w': []})
         
-    def test_add_vs(self):
-        self.g.add_vers(['v', 'm', 'w'])
-        self.assertEqual(self.g.graph, {'v': [],
-                                        'm': [],
-                                        'w': []})
+#     def test_add_vs(self):
+#         self.g.add_vers(['v', 'm', 'w'])
+#         self.assertEqual(self.g.graph, {'v': [],
+#                                         'm': [],
+#                                         'w': []})
         
 
-    def test_add_edge(self):
-        self.g.add_edge(self.edge)
-        g = self.g.graph
-        self.assertEqual(g, {'a': ['b'],
-                              'b': ['a']})
+#     def test_add_edge(self):
+#         self.g.add_edge(self.edge)
+#         g = self.g.graph
+#         self.assertEqual(g, {'a': ['b'],
+#                               'b': ['a']})
     
-    def test_add_edges(self):
-        self.g.add_edges(self.edges)
-        g = self.g.graph
-        self.assertEqual(g, {'a':['b', 'c'],
-                             'b':['a', 'c'],
-                             'c':['a', 'b', 'e'],
-                             'e':['c']})
+#     def test_add_edges(self):
+#         self.g.add_edges(self.edges)
+#         g = self.g.graph
+#         self.assertEqual(g, {'a':['b', 'c'],
+#                              'b':['a', 'c'],
+#                              'c':['a', 'b', 'e'],
+#                              'e':['c']})
         
-    def test_get_edges(self):
-        self.g.add_edges(self.edges)
-        edges = self.g.get_edges()
-        self.assertEqual(edges, [['a', 'b'], ['a', 'c'], ['b', 'a'], ['b', 'c'], ['c', 'a'], ['c', 'b'], ['c', 'e'], ['e', 'c']])
+#     def test_get_edges(self):
+#         self.g.add_edges(self.edges)
+#         edges = self.g.get_edges()
+#         self.assertEqual(edges, [['a', 'b'], ['a', 'c'], ['b', 'a'], ['b', 'c'], ['c', 'a'], ['c', 'b'], ['c', 'e'], ['e', 'c']])
     
-    def test_is_vc(self):
-        self.g.add_edges(self.edges)
-        self.assertTrue(self.g.is_vc({'c'}))
-        self.assertFalse(self.g.is_vc({}))
+#     def test_is_vc(self):
+#         self.g.add_edges(self.edges)
+#         self.assertTrue(self.g.is_vc({'c'}))
+#         self.assertFalse(self.g.is_vc({}))
 
-    def test_vc_1(self):
-        self.g.add_edges(self.edges)
-        vc = self.g.approx1()
-        self.assertTrue(self.g.is_vc(vc))
+#     def test_vc_1(self):
+#         self.g.add_edges(self.edges)
+#         vc = self.g.approx1()
+#         self.assertTrue(self.g.is_vc(vc))
 
-    def test_vc_3(self):
-        self.g.add_edges(self.edges)
-        vc = self.g.approx3()
-        self.assertTrue(self.g.is_vc(vc))
+#     def test_vc_3(self):
+#         self.g.add_edges(self.edges)
+#         vc = self.g.approx3()
+#         self.assertTrue(self.g.is_vc(vc))
 
-    def test_is_ind_set(self):
-        self.g.add_edges(self.edges)
-        ind = {'a', 'e'}
-        ind_n = {'a', 'b'}
-        self.assertTrue(self.g.is_indep_set(ind))
-        self.assertFalse(self.g.is_indep_set(ind_n))
+#     def test_is_ind_set(self):
+#         self.g.add_edges(self.edges)
+#         ind = {'a', 'e'}
+#         ind_n = {'a', 'b'}
+#         self.assertTrue(self.g.is_indep_set(ind))
+#         self.assertFalse(self.g.is_indep_set(ind_n))
     
-    def test_find_ind(self):
-        self.g.add_edges(self.edges)
-        ind_vs = self.g.find_ind_set()
-        self.assertTrue(self.g.is_indep_set(ind_vs))
+#     def test_find_ind(self):
+#         self.g.add_edges(self.edges)
+#         ind_vs = self.g.find_ind_set()
+#         self.assertTrue(self.g.is_indep_set(ind_vs))
 
 # if __name__ == '__main__':
 #     unittest.main()
@@ -462,8 +462,157 @@ def mvc_mis_relation(_v_num):
     mis_scales = mis_lens(v)
     draw_2_graphs(mvc_scales, mis_scales, "somehting")
 
-mvc_mis_relation(30)
+# mvc_mis_relation(30)
 
-g = Graph()
-g.add_edges([[10, 14], [14, 10]])
-print(g.approx3())
+# g = Graph()
+# g.add_edges([[10, 14], [14, 10]])
+# print(g.approx3())
+
+
+
+#glass drop experienment problem
+#any glass drop from floor x and lower intact, floor x+1 and above shatters glass
+#specify what to optimize
+
+
+def drop(glasses, floors, memo):
+    if floors == 0 or floors == 1:
+        return floors
+    
+    if glasses == 1:
+        return floors
+    
+    mini:int = 99999
+    
+    lo = 1
+    hi = floors
+    while lo <= hi:
+        mid = (lo + hi)//2
+
+        if memo[glasses-1][mid-1] != -1:
+            low = memo[glasses-1][mid-1]
+        else:
+            low = drop(glasses-1, mid-1, memo)
+
+        low = drop(glasses-1, mid-1, memo)
+        high = drop(glasses, floors-mid, memo)
+
+
+        if high>low:
+            lo = mid - 1
+        else:
+            hi = mid + 1
+
+
+class binarySearchTree:
+    key: int
+
+    def __init__(self, k) -> None:
+        self.key = k
+        self.left = None
+        self.right = None
+    
+    def createNode(self, k):
+        return binarySearchTree(k)
+
+    def addNode(self, k):
+        if self.key == k: return
+        if k < self.key and self.left == None:
+            self.left = self.createNode(k)
+            return
+        if k > self.key and self.right == None:
+            self.right = self.createNode(k)
+            return
+        if k < self.key:
+            self.left.addNode(k)
+            return
+        if k > self.key:
+            self.right.addNode(k)
+
+    def search(self, k) -> bool:
+        if self.key == k:
+            return True
+        if k < self.key:
+            if self.left != None:
+                return self.left.search(k)
+            return False
+        elif k > self.key:
+            if self.right != None:
+                return self.right.search(k)
+            return False
+        
+    def delete(self, k):
+        if self == None:
+            return self
+        
+        if k < self.key:
+            self.left = self.left.delete(k)
+            return self
+        
+        if k > self.key:
+            self.right = self.right.delete(k)
+            return self
+        
+        if self.left == None and self.right == None:
+            return None
+        
+        if self.left == None and self.right != None:
+            return self.right
+        
+        if self.left != None and self.right == None:
+            return self.left
+        
+        minNode = self.right
+        while minNode.left != None:
+            minNode = minNode.left
+        
+        self.key = minNode.key
+        self.right = self.right.delete(minNode.key)
+        return self
+    
+
+
+    
+class binarySeearchTreeTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.bTree = binarySearchTree(10)
+    
+    def test_init(self):
+        self.assertEqual(self.bTree.key, 10)
+
+    def test_addNode(self):
+        self.bTree.addNode(1)
+        self.bTree.addNode(20)
+        self.bTree.addNode(4)
+        self.assertEqual(self.bTree.left.key, 1)
+        self.assertEqual(self.bTree.right.key, 20)
+        self.assertEqual(self.bTree.left.right.key, 4)
+    
+    def test_search(self):
+        self.bTree.addNode(1)
+        self.bTree.addNode(20)
+        self.bTree.addNode(4)
+        self.assertEqual(self.bTree.search(1), True)
+        self.assertEqual(self.bTree.search(4), True)
+        self.assertEqual(self.bTree.search(10), True)
+        self.assertEqual(self.bTree.search(20), True)
+        self.assertEqual(self.bTree.search(30), False)
+
+    def test_delete(self):
+        self.bTree.addNode(1)
+        self.bTree.addNode(20)
+        self.bTree.addNode(4)
+        self.bTree.addNode(0)
+        self.bTree.addNode(30)
+        
+
+
+
+def go_test(val):
+    if val == 1:
+        if __name__ == '__main__':
+            unittest.main()
+
+go_test(0)
+        
+

@@ -2186,12 +2186,24 @@ class Tree:
                 self.right.add_num(num)
     
 
-t = Tree(5)
-t.add_num(4)
-t.add_num(6)
-t.add_num(0)
-t.add_num(10)
-t.add_num(6)
+# t = Tree(5)
+# t.add_num(4)
+# t.add_num(6)
+# t.add_num(0)
+# t.add_num(10)
+# t.add_num(6)
 
 
-t.print_bt()
+# t.print_bt()
+                
+memo = {}
+def unique_ways(n):
+    if n < 0:
+        raise ValueError("no neg stair state")
+    if n <= 2:
+        return n
+    if n not in memo:
+        memo[n] = unique_ways(n - 1) + unique_ways(n - 2)
+    return memo[n]
+
+print(unique_ways(5))
