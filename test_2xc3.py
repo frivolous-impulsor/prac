@@ -4,6 +4,7 @@ import math
 from mpl_toolkits import mplot3d
 import numpy as np
 import matplotlib.pyplot as plt
+import timeit
 
 
 class Tree:
@@ -602,7 +603,7 @@ class binarySearchTree:
         self.bTree.addNode(4)
         self.bTree.addNode(0)
         self.bTree.addNode(30)
-  
+
     
 class binarySearchTreeDynamic:
     def __init__(self, k) -> None:
@@ -613,7 +614,7 @@ class binarySearchTreeDynamic:
         self.memo[k] =True
 
     def addNode(self, k):
-        if k in self.memo.keys():
+        if k in self.memo:
             if self.memo[k]:
                 return
         self.rec_addNode(k)
@@ -634,7 +635,7 @@ class binarySearchTreeDynamic:
             return
 
     def search(self, k) -> bool:
-        if k in self.memo.keys():
+        if k in self.memo:
             return self.memo[k]
         self.memo[k] = False
         if k == self.key:
@@ -650,7 +651,7 @@ class binarySearchTreeDynamic:
             return self.right.search(k)
         
     def delete(self, k):
-        if k in self.memo.keys():
+        if k in self.memo:
             if not self.memo[k]:
                 return
         else:
@@ -746,12 +747,96 @@ class binarySearchTreeDynamicTest(unittest.TestCase):
             self.assertFalse(self.bTree.search(testNum))
         
 
-      
+    
 def go_test(val):
     if val == 1 and __name__ == '__main__':
         unittest.main()
 
-go_test(1)
+go_test(0)
 
-        
 
+#There're 2 major experiments, one being three funcitons randomly called, two being three funcitons tested separately.
+#We plan to test the performance difference between traditional binary search tree and dynamic binray search tree. We name them Tbst and Dbst, respectively.
+#The experienment will focus on three essential functions: insert, search, and delete. 
+#Each function group is carried out randomly, with preadded dummy tree, to simulate real situation.
+#The variable factor of performance is the length of total operation.
+
+def create_custom_list(length, max_value, item=None, item_index=None):
+    random_list = [random.randint(0,max_value) for i in range(length)]
+    if item!= None:
+        random_list.insert(item_index,item)
+    return random_list
+
+def draw_2_graphs(y1, y2, title):
+    x_values = [i for i in range(1, 15)]  # Cover all 10 data points for each algorithm
+    plt.figure()
+    plt.plot(x_values, y1, label='traditional BST', marker='o')
+    plt.plot(x_values, y2, label='dynamic BST', marker='s')
+    plt.xlabel('List scale')
+    plt.ylabel('Run time')
+    plt.title(title)
+    plt.legend()
+    plt.show()
+
+def finalSearchExperiment():
+    trial = 20
+    scale = 15
+    popFactors = [2**i for i in range(1,scale) ]
+    tTimes = []
+    dTimes = []
+
+    for popFactor in popFactors:
+        tTime = 0
+        dTime = 0
+        list=create_custom_list(popFactor, 1)
+        for i in range(trial):
+            tTree = binarySearchTree(10)
+            dTree = binarySearchTreeDynamic(10)
+            for num in list:
+                func_id = random.randint(0,2)
+                if func_id == 0:
+
+                    tTimeInit = timeit.default_timer()
+                    tTree.addNode(num)
+                    tTimeFinal = timeit.default_timer()
+
+                    dTimeInit = timeit.default_timer()
+                    dTree.addNode(num)
+                    dTimefinal = timeit.default_timer()
+
+                    tInterval = tTimeFinal - tTimeInit
+                    dInterval = dTimefinal - dTimeInit
+                    tTime += tInterval
+                    dTime += dInterval
+
+                if func_id == 1:
+                    tTimeInit = timeit.default_timer()
+                    tTree.search(num)
+                    tTimeFinal = timeit.default_timer()
+                    dTimeInit = timeit.default_timer()
+                    dTree.search(num)
+                    dTimefinal = timeit.default_timer()
+                    tInterval = tTimeFinal - tTimeInit
+                    dInterval = dTimefinal - dTimeInit
+                    tTime += tInterval
+                    dTime += dInterval
+                
+                if func_id == 0:
+                    tTimeInit = timeit.default_timer()
+                    tTree.delete(num)
+                    tTimeFinal = timeit.default_timer()
+                    dTimeInit = timeit.default_timer()
+                    dTree.delete(num)
+                    dTimefinal = timeit.default_timer()
+                    tInterval = tTimeFinal - tTimeInit
+                    dInterval = dTimefinal - dTimeInit
+                    tTime += tInterval
+                    dTime += dInterval
+            tTime = tTime / trial
+            dTime = dTime / trial
+        tTimes.append(tTime)
+        dTimes.append(dTime)
+    draw_2_graphs(tTimes, dTimes, "runtime vs. number of operations")
+
+    
+finalSearchExperiment()
