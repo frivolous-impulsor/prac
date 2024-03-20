@@ -570,10 +570,8 @@ class binarySearchTree:
         self.right = self.right.delete(minNode.key)
         return self
     
-
-
     
-class binarySeearchTreeTest(unittest.TestCase):
+# class binarySeearchTreeTest(unittest.TestCase):
     def setUp(self) -> None:
         self.bTree = binarySearchTree(10)
     
@@ -604,15 +602,156 @@ class binarySeearchTreeTest(unittest.TestCase):
         self.bTree.addNode(4)
         self.bTree.addNode(0)
         self.bTree.addNode(30)
+  
+    
+class binarySearchTreeDynamic:
+    def __init__(self, k) -> None:
+        self.key = k
+        self.left = None
+        self.right = None
+        self.memo = {}
+        self.memo[k] =True
+
+    def addNode(self, k):
+        if k in self.memo.keys():
+            if self.memo[k]:
+                return
+        self.rec_addNode(k)
+        self.memo[k] = True
+    
+    def rec_addNode(self, k):
+        if k < self.key:
+            if self.left == None:
+                self.left = binarySearchTreeDynamic(k)
+                return
+            self.left.addNode(k)
+            return
+        if self.key < k:
+            if self.right == None:
+                self.right = binarySearchTreeDynamic(k)
+                return
+            self.right.addNode(k)
+            return
+
+    def search(self, k) -> bool:
+        if k in self.memo.keys():
+            return self.memo[k]
+        self.memo[k] = False
+        if k == self.key:
+            self.memo[k] = True
+            return True
+        if k < self.key:
+            if self.left == None:
+                return False
+            return self.left.search(k)
+        if self.key < k:
+            if self.right == None:
+                return False
+            return self.right.search(k)
+        
+    def delete(self, k):
+        if k in self.memo.keys():
+            if not self.memo[k]:
+                return
+        else:
+            return
+        #node to be deleted is certain to exist in the tree
+        self.rec_delete(k)
+        self.memo[k] = False
+        
+    def rec_delete(self, k):
+        if self == None:
+            return self
+
+        if k < self.key:
+            self.left = self.left.rec_delete(k)
+            return self
+        if self.key < k:
+            self.right = self.right.rec_delete(k)
+            return self
+        #located the node
+        if self.left == None and self.right == None:
+            return None
+        if self.left == None and self.right != None:
+            return self.right
+        if self.left != None and self.right == None:
+            return self.left
+        minNode = self.right
+        while minNode.left != None:
+            minNode = minNode.left
+        self.key = minNode.key
+        self.right.rec_delete(minNode.key)
+        self.memo[minNode.key] = True
+        return self
+
+
+# bTree = binarySearchTreeDynamic(10)
+# bTree.addNode(1)
+# bTree.addNode(20)
+# bTree.addNode(4)
+# bTree.addNode(0)
+# bTree.addNode(30)
+# bTree.addNode(40)
+# bTree.addNode(50)
+
+# print(bTree.memo)
+
+# bTree.delete(50)
+# print(bTree.right.right.right.right.key)
+
+        
+        
+class binarySearchTreeDynamicTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.bTree = binarySearchTreeDynamic(10)
+    
+    def test_init(self):
+        self.assertEqual(self.bTree.key, 10)
+
+    def test_addNode(self):
+        self.bTree.addNode(1)
+        self.bTree.addNode(20)
+        self.bTree.addNode(4)
+        self.assertEqual(self.bTree.left.key, 1)
+        self.assertEqual(self.bTree.right.key, 20)
+        self.assertEqual(self.bTree.left.right.key, 4)
+
+    def test_search(self):
+        self.bTree.addNode(1)
+        self.bTree.addNode(20)
+        self.bTree.addNode(4)
+        self.assertEqual(self.bTree.search(1), True)
+        self.assertEqual(self.bTree.search(4), True)
+        self.assertEqual(self.bTree.search(10), True)
+        self.assertEqual(self.bTree.search(20), True)
+        self.assertEqual(self.bTree.search(30), False)
+
+    def test_delete(self):
+        self.bTree.addNode(1)
+        self.bTree.addNode(20)
+        self.bTree.addNode(4)
+        self.bTree.addNode(0)
+        self.bTree.addNode(30)
+        self.bTree.addNode(40)
+        self.bTree.addNode(50)
+        
+        leafNum = 50
+        oneLeanNum = 30
+        twoLeanNum = 1
+        rootNum = 10
+        testNums = [leafNum, oneLeanNum, twoLeanNum, rootNum]
+        for testNum in testNums:
+            self.assertTrue(self.bTree.search(testNum))
+            self.bTree.delete(testNum)
+            self.assertFalse(self.bTree.search(testNum))
         
 
-
-
+      
 def go_test(val):
-    if val == 1:
-        if __name__ == '__main__':
-            unittest.main()
+    if val == 1 and __name__ == '__main__':
+        unittest.main()
 
-go_test(0)
+go_test(1)
+
         
 
