@@ -543,36 +543,38 @@ class binarySearchTree:
             return False
         
     def delete(self, k):
-        if self == None:
-            return self
+        self.rec_delete(k)
         
+    def rec_delete(self, k):
+
         if k < self.key:
-            self.left = self.left.delete(k)
-            return self
-        
-        if k > self.key:
-            self.right = self.right.delete(k)
-            return self
-        
+            if self.left != None:
+                self.left = self.left.rec_delete(k)
+                return self
+            else:
+                return self
+        if self.key < k:
+            if self.right != None:
+                self.right = self.right.rec_delete(k)
+                return self
+            else:
+                return self
+        #located the node
         if self.left == None and self.right == None:
             return None
-        
         if self.left == None and self.right != None:
             return self.right
-        
         if self.left != None and self.right == None:
             return self.left
-        
         minNode = self.right
         while minNode.left != None:
             minNode = minNode.left
-        
         self.key = minNode.key
-        self.right = self.right.delete(minNode.key)
+        self.right = self.right.rec_delete(minNode.key)
         return self
     
     
-# class binarySeearchTreeTest(unittest.TestCase):
+class binarySeearchTreeTest(unittest.TestCase):
     def setUp(self) -> None:
         self.bTree = binarySearchTree(10)
     
@@ -603,7 +605,18 @@ class binarySearchTree:
         self.bTree.addNode(4)
         self.bTree.addNode(0)
         self.bTree.addNode(30)
-
+        self.bTree.addNode(40)
+        self.bTree.addNode(50)
+        
+        leafNum = 50
+        oneLeanNum = 30
+        twoLeanNum = 1
+        rootNum = 10
+        testNums = [leafNum, oneLeanNum, twoLeanNum, rootNum]
+        for testNum in testNums:
+            self.assertTrue(self.bTree.search(testNum))
+            self.bTree.delete(testNum)
+            self.assertFalse(self.bTree.search(testNum))
     
 class binarySearchTreeDynamic:
     def __init__(self, k) -> None:
@@ -665,11 +678,17 @@ class binarySearchTreeDynamic:
             return self
 
         if k < self.key:
-            self.left = self.left.rec_delete(k)
-            return self
+            if self.left != None:
+                self.left = self.left.rec_delete(k)
+                return self
+            else:
+                return self
         if self.key < k:
-            self.right = self.right.rec_delete(k)
-            return self
+            if self.right != None:
+                self.right = self.right.rec_delete(k)
+                return self
+            else:
+                return self
         #located the node
         if self.left == None and self.right == None:
             return None
@@ -681,7 +700,7 @@ class binarySearchTreeDynamic:
         while minNode.left != None:
             minNode = minNode.left
         self.key = minNode.key
-        self.right.rec_delete(minNode.key)
+        self.right = self.right.rec_delete(minNode.key)
         self.memo[minNode.key] = True
         return self
 
@@ -702,7 +721,7 @@ class binarySearchTreeDynamic:
 
         
         
-class binarySearchTreeDynamicTest(unittest.TestCase):
+# class binarySearchTreeDynamicTest(unittest.TestCase):
     def setUp(self) -> None:
         self.bTree = binarySearchTreeDynamic(10)
     
@@ -768,7 +787,7 @@ def create_custom_list(length, max_value, item=None, item_index=None):
     return random_list
 
 def draw_2_graphs(y1, y2, title):
-    x_values = [i for i in range(1, 15)]  # Cover all 10 data points for each algorithm
+    x_values = [i for i in range(1, 20)]  # Cover all 10 data points for each algorithm
     plt.figure()
     plt.plot(x_values, y1, label='traditional BST', marker='o')
     plt.plot(x_values, y2, label='dynamic BST', marker='s')
@@ -779,16 +798,16 @@ def draw_2_graphs(y1, y2, title):
     plt.show()
 
 def finalSearchExperiment():
-    trial = 20
-    scale = 15
-    popFactors = [2**i for i in range(1,scale) ]
+    trial = 10
+    scale = 20
+    popFactors = [2**i for i in range(scale, 1, -1) ]
     tTimes = []
     dTimes = []
 
     for popFactor in popFactors:
         tTime = 0
         dTime = 0
-        list=create_custom_list(popFactor, 1)
+        list=create_custom_list(10000, popFactor)
         for i in range(trial):
             tTree = binarySearchTree(10)
             dTree = binarySearchTreeDynamic(10)
@@ -821,7 +840,7 @@ def finalSearchExperiment():
                     tTime += tInterval
                     dTime += dInterval
                 
-                if func_id == 0:
+                if func_id == 2:
                     tTimeInit = timeit.default_timer()
                     tTree.delete(num)
                     tTimeFinal = timeit.default_timer()
