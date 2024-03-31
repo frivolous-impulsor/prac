@@ -71,8 +71,8 @@ class IndexMinPQ:
 
 class TestIndexHeapTest(unittest.TestCase):
     def setUp(self) -> None:
-        self.testSize = 20
-        self.heap = IndexMinPQ(20)
+        self.testSize = 4
+        self.heap = IndexMinPQ(self.testSize)
     
     def testInsert(self):
         heap = self.heap
@@ -142,9 +142,60 @@ class TestIndexHeapTest(unittest.TestCase):
         self.assertEqual(heap.im, expectedIm)
         self.assertEqual(heap.size, 3)
 
+class WeightEdge:
+    def __init__(self, u, v, weight) -> None:
+        self.u = u
+        self.v = v
+        self.weight = weight
+    
+    def weight(self):
+        return self.weight
+    
+    def init(self):
+        return self.u
+    
+    def final(self):
+        return self.v
+
+class directedWeightedGraph:
+    def __init__(self, n) -> None:
+        self.numV = n
+        self.numE = 0
+        self.adjList = [{} for i in range(n)]
+
+    def vList(self, v):
+        if v >= self.numV:
+            raise IndexError("vertex not exist")
+        return self.adjList[v]
+
+    def addEdge(self, n1, n2, w):
+        edge = WeightEdge(n1, n2, w)
+        adjList = self.adjList
+        adjList[n1].add(edge)
+        self.numE +=1
+
+    def addEdgeBoth(self, n1, n2, w):
+        edge = WeightEdge(n1, n2, w)
+        adjList = self.adjList
+        adjList[n1].add(edge)
+        adjList[n2].add(edge)
+        self.numE +=2
+
+    def removeVertex(self, v):
+        self.adjList[v].clear()
+        for elist in self.adjList:
+            for edge in elist:
+                a = edge.init()
+                b = edge.final()
+                if a == v or b == v:
+                    elist.remove(edge)
+
+    def dijkstra(self, s, e):
+        "todo"
+
 
 def go_test(val):
     if val == 1 and __name__ == '__main__':
         unittest.main()
 
-go_test(1)
+go_test(0)
