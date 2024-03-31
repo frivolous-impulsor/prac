@@ -52,6 +52,19 @@ class IndexMinPQ:
         self.size -=1
         self.sink(kPosition)
         return removed
+    
+    def update(self, key, newVal):
+        previouseVal = self.val[key]
+        if previouseVal == newVal:
+            return
+        kPosition = self.pm[key]
+        self.val[key] = newVal
+        if newVal > previouseVal:
+            self.sink(kPosition)
+            return
+        self.swim(kPosition)
+        
+
 
 
 
@@ -64,19 +77,20 @@ class TestIndexHeapTest(unittest.TestCase):
     def testInsert(self):
         heap = self.heap
         insertSize = 4
-        insertVals = [10, 12, 5, 0]
-        insertPm = [2,3,1,0]
-        insertIm = [3,2,0,1]
+        insertVals = [10, 5, 15, 1]
 
         for i in range(insertSize):
             heap.insert(i,insertVals[i])
         expectedVal = [None for i in range(self.testSize)]
         expectedPm = [None for i in range(self.testSize)]
         expectedIm = [None for i in range(self.testSize)]
+
+        pmPre = [3,1,2,0]
+        imPre = [3,1,2,0]
         for i in range(len(insertVals)):
             expectedVal[i] = insertVals[i]
-            expectedPm[i] = insertPm[i]
-            expectedIm[i] = insertIm[i]
+            expectedPm[i] = pmPre[i]
+            expectedIm[i] = imPre[i]
         self.assertEqual(heap.val, expectedVal)
         self.assertEqual(heap.pm, expectedPm)
         self.assertEqual(heap.im, expectedIm)
@@ -85,24 +99,48 @@ class TestIndexHeapTest(unittest.TestCase):
     def testRemove(self):
         heap = self.heap
         insertSize = 4
-        insertVals = [10, 12, 5, 0]
-        insertPm = [0,2,1]
-        insertIm = [0,2,1]
+        insertVals = [10, 5, 15, 1]
 
         for i in range(insertSize):
             heap.insert(i,insertVals[i])
-        heap.remove(3)
         expectedVal = [None for i in range(self.testSize)]
         expectedPm = [None for i in range(self.testSize)]
         expectedIm = [None for i in range(self.testSize)]
-        for i in range(len(insertPm)):
+        heap.remove(3)
+        pmPre = [1,0,2]
+        imPre = [1,0,2]
+        for i in range(3):
             expectedVal[i] = insertVals[i]
-            expectedPm[i] = insertPm[i]
-            expectedIm[i] = insertIm[i]
+            expectedPm[i] = pmPre[i]
+            expectedIm[i] = imPre[i]
         self.assertEqual(heap.val, expectedVal)
         self.assertEqual(heap.pm, expectedPm)
         self.assertEqual(heap.im, expectedIm)
+        self.assertEqual(heap.size, 3)
 
+    def testUpdate(self):
+        heap = self.heap
+        insertSize = 4
+        insertVals = [10, 5, 15, 1]
+
+        for i in range(insertSize):
+            heap.insert(i,insertVals[i])
+        expectedVal = [None for i in range(self.testSize)]
+        expectedPm = [None for i in range(self.testSize)]
+        expectedIm = [None for i in range(self.testSize)]
+        heap.remove(3)
+        heap.update(2,4)
+        valPre = [10,5,4]
+        pmPre = [1,2,0]
+        imPre = [2,0,1]
+        for i in range(3):
+            expectedVal[i] = valPre[i]
+            expectedPm[i] = pmPre[i]
+            expectedIm[i] = imPre[i]
+        self.assertEqual(heap.val, expectedVal)
+        self.assertEqual(heap.pm, expectedPm)
+        self.assertEqual(heap.im, expectedIm)
+        self.assertEqual(heap.size, 3)
 
 
 def go_test(val):
