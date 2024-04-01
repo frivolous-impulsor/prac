@@ -1,5 +1,6 @@
 import unittest
 import random
+import math
 
 #Part 1
 
@@ -10,6 +11,9 @@ class IndexMinPQ:
         self.pm: list[int] = [None for i in range (n)]
         self.im: list[int] = [None for i in range (n)]
         self.size = 0
+
+    def contains(self, i):
+        return self.val[i] != None
     
     def swap(self, i, j):
         self.pm[self.im[i]] = j
@@ -63,10 +67,19 @@ class IndexMinPQ:
             self.sink(kPosition)
             return
         self.swim(kPosition)
-        
 
-
-
+    def peek(self):
+        if self.size == 0:
+            raise ValueError("priority queue currently empty, can't peek")
+        topKey = self.im[0]
+        topVal = self.val[topKey]
+        return (topKey, topVal)
+    
+    def pop(self):
+        if self.size == 0:
+            raise ValueError("priority queue currently empty, can't pop")
+        topKey = self.im[0]
+        return self.remove(topKey)
 
 
 class TestIndexHeapTest(unittest.TestCase):
@@ -161,7 +174,7 @@ class directedWeightedGraph:
     def __init__(self, n) -> None:
         self.numV = n
         self.numE = 0
-        self.adjList = [{} for i in range(n)]
+        self.adjList = [set() for i in range(n)]
 
     def vList(self, v):
         if v >= self.numV:
@@ -175,10 +188,11 @@ class directedWeightedGraph:
         self.numE +=1
 
     def addEdgeBoth(self, n1, n2, w):
-        edge = WeightEdge(n1, n2, w)
+        edge1 = WeightEdge(n1, n2, w)
+        edge2 = WeightEdge(n2, n1, w)
         adjList = self.adjList
-        adjList[n1].add(edge)
-        adjList[n2].add(edge)
+        adjList[n1].add(edge1)
+        adjList[n2].add(edge2)
         self.numE +=2
 
     def removeVertex(self, v):
@@ -190,8 +204,47 @@ class directedWeightedGraph:
                 if a == v or b == v:
                     elist.remove(edge)
 
-    def dijkstra(self, s, e):
-        "todo"
+    def dijkstra(self, s):
+        def relax(v: int):
+            nonlocal edge_to
+            nonlocal dist_to
+            nonlocal pq
+            nonlocal adjList
+            for edge in adjList[v]:
+                to = edge.final()
+                if dist_to[to] > dist_to[v] + edge.weight:
+                    dist_to[to] = dist_to[v] + edge.weight
+                    edge_to[to] = v
+
+                    if pq.contains(to):
+                        pq.update(to, dist_to[to])
+                    else:
+                        pq.insert(to, dist_to[to])
+
+        numV = self.numV
+        adjList = self.adjList
+        edge_to = [None for i in range(numV)]
+        dist_to = [math.inf for i in range(numV)]
+        dist_to[s] = 0
+        pq = IndexMinPQ(self.numE)
+        pq.insert(s, 0)
+        
+        while pq.size > 0:
+            relax(pq.pop()[0])
+        return (edge_to, dist_to)
+        
+route = directedWeightedGraph(7)
+route.addEdgeBoth(1,0,6)
+route.addEdgeBoth(1,4,10)
+route.addEdgeBoth(0,2,7)
+route.addEdgeBoth(2,4,2)
+route.addEdgeBoth(4,5,3)
+route.addEdgeBoth(2,3,4)
+route.addEdgeBoth(3,5,8)
+route.addEdgeBoth(5,6,3)
+
+
+print(route.dijkstra(2))
 
 
 def go_test(val):
