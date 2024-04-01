@@ -37,13 +37,15 @@ class IndexMinPQ:
     
     def sink(self, i):
         left = i * 2 + 1
+        if self.im[left] == None:
+            return
         right = left + 1
         smaller = left
-        if right < self.size and self.val[left] > self.val[right]:
+        if self.im[right] !=None and self.val[self.im[left]] > self.val[self.im[right]]:
             smaller = right
-        if smaller < self.size and self.val[self.im[i]] > self.val[self.im[smaller]]:
+        if self.val[self.im[i]] > self.val[self.im[smaller]]:
             self.swap(i, smaller)
-            self.sink(smaller)  
+            self.sink(smaller)
 
     def remove(self, key): 
         removed = (key, self.val[key])
@@ -220,7 +222,6 @@ class directedWeightedGraph:
                         pq.update(to, dist_to[to])
                     else:
                         pq.insert(to, dist_to[to])
-
         numV = self.numV
         adjList = self.adjList
         edge_to = [None for i in range(numV)]
@@ -232,23 +233,28 @@ class directedWeightedGraph:
         while pq.size > 0:
             relax(pq.pop()[0])
         return (edge_to, dist_to)
+    
+class GraphTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.route = directedWeightedGraph(7)
+        self.route.addEdgeBoth(1,0,6)
+        self.route.addEdgeBoth(1,4,10)
+        self.route.addEdgeBoth(0,2,7)
+        self.route.addEdgeBoth(2,4,2)
+        self.route.addEdgeBoth(4,5,3)
+        self.route.addEdgeBoth(2,3,4)
+        self.route.addEdgeBoth(3,5,8)
+        self.route.addEdgeBoth(5,6,3)
+        return super().setUp()
         
-route = directedWeightedGraph(7)
-route.addEdgeBoth(1,0,6)
-route.addEdgeBoth(1,4,10)
-route.addEdgeBoth(0,2,7)
-route.addEdgeBoth(2,4,2)
-route.addEdgeBoth(4,5,3)
-route.addEdgeBoth(2,3,4)
-route.addEdgeBoth(3,5,8)
-route.addEdgeBoth(5,6,3)
-
-
-print(route.dijkstra(2))
+    def testDijk(self):
+        route = self.route
+        init_0 = route.dijkstra(0)
+        self.assertEqual(init_0, ([None, 0, 0, 2, 2, 4, 5], [0, 6, 7, 11, 9, 12, 15]))
 
 
 def go_test(val):
     if val == 1 and __name__ == '__main__':
         unittest.main()
 
-go_test(0)
+go_test(1)
