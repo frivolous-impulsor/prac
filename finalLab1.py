@@ -299,13 +299,15 @@ class GraphTestOnSize:
     def __init__(self, scale) -> None:
         self.scale: int = scale
         self.trial = 10
-        self.scaleList: list[int] = [2**i for i in range(scale)]
-        self.sizeEList: list[int] = [((2**i)**2)//2 for i in range(scale)]
+        self.scaleList: list[int] = [3*(2**i) for i in range(1,scale+1)]
+        self.sizeEList = [None for i in range(scale)]
+        for i in range(scale):
+            self.sizeEList[i] = (self.scaleList[i]**2)//4
 
     def randEdge(self, high: int):
-        s: int = random.randint(0, high)
-        e: int = random.randint(0, high)
-        while s == e: e = random.randint(0, high)
+        s: int = random.randint(0, high-1)
+        e: int = random.randint(0, high-1)
+        while s == e: e = random.randint(0, high-1)
         weight = random.randint(0, 1000)
         return (s, e, weight)
 
@@ -331,7 +333,7 @@ class GraphTestOnSize:
             time = time/self.trial
             intervals[i] = time
 
-test1 = GraphTestOnSize(15)
+test1 = GraphTestOnSize(10)
 test1.testTime()
             
 
