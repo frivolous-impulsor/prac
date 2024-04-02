@@ -206,15 +206,16 @@ class directedWeightedGraph:
                 if a == v or b == v:
                     elist.remove(edge)
 
-    def dijkstra(self, s):
+    def dijkstra(self, s, k=math.inf):
         def relax(v: int):
             nonlocal edge_to
             nonlocal dist_to
             nonlocal pq
             nonlocal adjList
+            nonlocal relaxLimit
             for edge in adjList[v]:
                 to = edge.final()
-                if dist_to[to] > dist_to[v] + edge.weight:
+                if dist_to[to] > dist_to[v] + edge.weight and relaxLimit[to] > 0:
                     dist_to[to] = dist_to[v] + edge.weight
                     edge_to[to] = v
 
@@ -222,17 +223,50 @@ class directedWeightedGraph:
                         pq.update(to, dist_to[to])
                     else:
                         pq.insert(to, dist_to[to])
+                    relaxLimit[to] -=1
         numV = self.numV
         adjList = self.adjList
         edge_to = [None for i in range(numV)]
         dist_to = [math.inf for i in range(numV)]
+        relaxLimit = [k for i in range(numV)]
         dist_to[s] = 0
         pq = IndexMinPQ(self.numE)
         pq.insert(s, 0)
+        relaxLimit[s] -=1
         
         while pq.size > 0:
             relax(pq.pop()[0])
         return (edge_to, dist_to)
+    
+    def bellmanFord(self, s, k=math.inf):
+        numV = self.numV
+        if s >= numV:
+            raise ValueError("starting vertex not exist in graph")
+        numE = self.numE
+        relaxLimit = [k for i in range(numV)]
+        adjList = self.adjList
+        dist_to = [math.inf for i in range(numV)]
+        dist_to[s] = 0
+        relaxLimit[s] -=1
+        edge_to = [None for i in range(numV)]
+
+        for i in range(numV - 1):
+            for edges in adjList:
+                for edge in edges:
+                    if dist_to[edge.final()] > dist_to[edge.init()] + edge.weight and relaxLimit[edge.final()] > 0:
+                       dist_to[edge.final()] = dist_to[edge.init()] + edge.weight 
+                       edge_to[edge.final()] = edge.init() 
+                       relaxLimit[edge.final()] -=1
+
+        
+        for i in range(numV - 1):
+            for edges in adjList:
+                for edge in edges:
+                    if dist_to[edge.final()] > dist_to[edge.init()] + edge.weight and relaxLimit[edge.final()] > 0:
+                       dist_to[edge.final()] = -math.inf
+                       relaxLimit[edge.final()] -=1
+
+        return (dist_to, edge_to)
     
 class GraphTest(unittest.TestCase):
     def setUp(self) -> None:
