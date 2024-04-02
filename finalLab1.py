@@ -1,7 +1,7 @@
 import unittest
 import random
 import math
-
+import timeit
 #Part 1
 
 #1.1
@@ -29,6 +29,7 @@ class IndexMinPQ:
         
     def insert(self, key, value):
         insertIndex = self.size
+        print("key: ", key)
         self.val[key] = value
         self.pm[key] = insertIndex
         self.im[insertIndex] = key
@@ -206,7 +207,7 @@ class directedWeightedGraph:
                 if a == v or b == v:
                     elist.remove(edge)
 
-    def dijkstra(self, s, k=math.inf):
+    def dijkstra(self, s, k=None):
         def relax(v: int):
             nonlocal edge_to
             nonlocal dist_to
@@ -224,6 +225,7 @@ class directedWeightedGraph:
                     else:
                         pq.insert(to, dist_to[to])
                     relaxLimit[to] -=1
+        if k == None: k = self.numV
         numV = self.numV
         adjList = self.adjList
         edge_to = [None for i in range(numV)]
@@ -238,7 +240,8 @@ class directedWeightedGraph:
             relax(pq.pop()[0])
         return (edge_to, dist_to)
     
-    def bellmanFord(self, s, k=math.inf):
+    def bellmanFord(self, s, k=None):
+        if k == None: k = self.numV
         numV = self.numV
         if s >= numV:
             raise ValueError("starting vertex not exist in graph")
@@ -286,9 +289,63 @@ class GraphTest(unittest.TestCase):
         init_0 = route.dijkstra(0)
         self.assertEqual(init_0, ([None, 0, 0, 2, 2, 4, 5], [0, 6, 7, 11, 9, 12, 15]))
 
+#performance(accurary, time, space) experiment 
+#graph size, with graph density(numE/numV) and k(numV) being constant
+#We assume moderately dense(numE/numV) graph. 
+#For extremly sparse, numE -> 0.
+#For extremly dense(any vertex reaches any other vertex), numE -> numV**2
+#For moderately dense, we pick mid -> numV**2 // 2
+class GraphTestOnSize:
+    def __init__(self, scale) -> None:
+        self.scale: int = scale
+        self.trial = 10
+        self.scaleList: list[int] = [2**i for i in range(scale)]
+        self.sizeEList: list[int] = [((2**i)**2)//2 for i in range(scale)]
+
+    def randEdge(self, high: int):
+        s: int = random.randint(0, high)
+        e: int = random.randint(0, high)
+        while s == e: e = random.randint(0, high)
+        weight = random.randint(0, 1000)
+        return (s, e, weight)
+
+        
+    def testTime(self):
+        scaleList = self.scaleList
+        sizeEList =self.sizeEList
+        intervals = [None for _ in range(self.scale)]
+        for i in range(self.scale):
+            sizeE = sizeEList[i]
+            graph = directedWeightedGraph(scaleList[i])
+            for j in range(sizeE):
+                edgeTuple = self.randEdge(scaleList[i])
+                graph.addEdge(edgeTuple[0], edgeTuple[1], edgeTuple[2])
+
+            #one graph assembled complete
+            time = 0
+            for i in range(self.trial):
+                init = timeit.default_timer()
+                graph.dijkstra(0)
+                interval = timeit.default_timer() - init
+                time += interval
+            time = time/self.trial
+            intervals[i] = time
+
+test1 = GraphTestOnSize(15)
+test1.testTime()
+            
+
+
+
+
+#graph density
+        
+
+#k
+
 
 def go_test(val):
     if val == 1 and __name__ == '__main__':
         unittest.main()
 
-go_test(1)
+go_test(0)
