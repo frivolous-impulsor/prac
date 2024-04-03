@@ -296,13 +296,17 @@ class GraphTest(unittest.TestCase):
 #For extremly dense(any vertex reaches any other vertex), numE -> numV**2
 #For moderately dense, we pick mid -> numV**2 // 2
 class GraphTestOnSize:
-    def __init__(self, scale) -> None:
+    def __init__(self, scale, density: int, kVal: int = math.inf) -> None:
+        if density > 100 and density < 0:
+            raise ValueError("density only [0, 100], 0 being extremely sparse and 100 being extremely dense")
+        self.kVal = kVal
         self.scale: int = scale
         self.trial = 5
         self.scaleList: list[int] = [2*(2**i) for i in range(1,scale+1)]
         self.sizeEList = [None for i in range(scale)]
         for i in range(scale):
-            self.sizeEList[i] = (self.scaleList[i]**2)//4
+            self.sizeEList[i] = math.ceil((self.scaleList[i]**2)*density*0.01)
+    #Since we set K to be highest, the accuracy is guranteeded to be 100%
 
     def randEdge(self, high: int):
         s: int = random.randint(0, high-1)
@@ -310,7 +314,6 @@ class GraphTestOnSize:
         while s == e: e = random.randint(0, high-1)
         weight = random.randint(0, 1000)
         return (s, e, weight)
-
         
     def testTime(self, funcId: int):
         scaleList = self.scaleList
@@ -326,15 +329,16 @@ class GraphTestOnSize:
                 graph.addEdge(edgeTuple[0], edgeTuple[1], edgeTuple[2])
 
             #one graph assembled complete
+            
             time = 0
             for _ in range(self.trial):
-                if id == 0:
+                if funcId == 0:
                     init = timeit.default_timer()
-                    graph.dijkstra(0)
+                    graph.dijkstra(0, self.kVal)
                     interval = timeit.default_timer() - init
                 else:
                     init = timeit.default_timer()
-                    graph.bellmanFord(0)
+                    graph.bellmanFord(0, self.kVal)
                     interval = timeit.default_timer() - init
                 time += interval
             time = time/self.trial
@@ -350,9 +354,70 @@ class GraphTestOnSize:
         plt.ylabel("time(sec)")
         plt.show()
         #plot completed)
-        
 
-test1 = GraphTestOnSize(8)
+
+#We test on density. Thus the size of the graph(numV) and k value is constant and preset.
+#
+class GraphTestOnDensity:
+    def __init__(self, scale, kVal = math.inf) -> None:
+        self.scale = 2**scale
+        self.kVal = kVal
+        self.trial = 5
+        self.densityDiv = 100
+        self.densityList: list[int] = [i for i in range(1, self.densityDiv+1)]
+        self.sizeEList = [None for i in range(self.densityDiv)]
+        for i in range(self.densityDiv):
+            self.sizeEList[i] = self.scale * self.densityList[i]
+
+    def randEdge(self, high: int):
+        s: int = random.randint(0, high-1)
+        e: int = random.randint(0, high-1)
+        while s == e: e = random.randint(0, high-1)
+        weight = random.randint(0, 1000)
+        return (s, e, weight)
+        
+    def testTime(self, funcId: int):
+        densityList = self.densityList
+        sizeEList =self.sizeEList
+        count = 0
+        #(time record initiated
+        intervals = [None for _ in range(self.densityDiv)]
+        for i in range(self.densityDiv):
+            sizeE = sizeEList[i]
+            graph = directedWeightedGraph(self.scale)
+            for _ in range(sizeE):
+                edgeTuple = self.randEdge(self.scale)
+                graph.addEdge(edgeTuple[0], edgeTuple[1], edgeTuple[2])
+
+            #one graph assembled complete
+            
+            time = 0
+            for _ in range(self.trial):
+                if funcId == 0:
+                    init = timeit.default_timer()
+                    graph.dijkstra(0, self.kVal)
+                    interval = timeit.default_timer() - init
+                else:
+                    init = timeit.default_timer()
+                    graph.bellmanFord(0, self.kVal)
+                    interval = timeit.default_timer() - init
+                time += interval
+            time = time/self.trial
+            intervals[i] = time
+            count +=1
+            print(count/self.scale*100, "%")
+        print(intervals)
+        #time record completed)
+        
+        #(plot initiated
+        plt.plot(densityList, intervals)
+        plt.xlabel("density of graph")
+        plt.ylabel("time(sec)")
+        plt.show()
+        #plot completed)
+
+
+test1 = GraphTestOnDensity(5)
 test1.testTime(0)
             
 
