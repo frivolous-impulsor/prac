@@ -359,7 +359,7 @@ class GraphTestOnSize:
 #We test on density. Thus the size of the graph(numV) and k value is constant and preset.
 #
 class GraphTestOnDensity:
-    def __init__(self, scale, kVal = math.inf) -> None:
+    def __init__(self, scale=8, kVal = math.inf) -> None:
         self.scale = 2**scale
         self.kVal = kVal
         self.trial = 5
@@ -405,7 +405,7 @@ class GraphTestOnDensity:
             time = time/self.trial
             intervals[i] = time
             count +=1
-            print(count/self.scale*100, "%")
+            print(count, "%")
         print(intervals)
         #time record completed)
         
@@ -416,12 +416,93 @@ class GraphTestOnDensity:
         plt.show()
         #plot completed)
 
+def linSpaceInt(low, high, divs):
+    return [math.ceil(low + x*(high-low)/divs) for x in range(divs)]
 
-test1 = GraphTestOnDensity(5)
-test1.testTime(0)
+print(linSpaceInt(1,25,5))
+
+class GraphTestOnK:
+    def __init__(self, scale=8, density=50) -> None:
+        self.scale = 2**scale
+        self.density = density
+        self.kDiv = 100
+        self.trial = 5
+        self.kList = linSpaceInt(1, self.scale, self.kDiv)
+        self.sizeE = math.ceil(self.scale**1.5 * self.density*0.01)
+
+    def randEdge(self, high: int):
+        s: int = random.randint(0, high-1)
+        e: int = random.randint(0, high-1)
+        while s == e: e = random.randint(0, high-1)
+        weight = random.randint(0, 1000)
+        return (s, e, weight)
+
+    def testTime(self, funcId: int):
+        kList = self.kList
+        print("klist: ", kList)
+        graph = directedWeightedGraph(self.scale)
+        for _ in range(self.sizeE):
+                edgeTuple = self.randEdge(self.scale)
+                graph.addEdge(edgeTuple[0], edgeTuple[1], edgeTuple[2])   
+        intervals = [None for _ in range(self.kDiv)]         
+        for i in range(self.kDiv):
+            for _ in range(self.trial):
+                time = 0
+                if funcId == 0:
+                    init = timeit.default_timer()
+                    graph.dijkstra(0, kList[i])
+                    interval = timeit.default_timer() - init
+                else:
+                    init = timeit.default_timer()
+                    graph.bellmanFord(0, kList[i])
+                    interval = timeit.default_timer() - init
+                time += interval
+            time = time/self.trial
+            intervals[i] = time
+        
+        #(plot initiated
+        plt.plot(kList, intervals)
+        plt.xlabel("k value of graph")
+        plt.ylabel("time(sec)")
+        plt.show()
+        #plot completed)
+
+    def testAccuracy(self, funcId: int):
+        kList = self.kList
+        graph = directedWeightedGraph(self.scale)
+        
+        accuracy = [None for _ in range(self.kDiv)]
+        for _ in range(self.sizeE):
+                edgeTuple = self.randEdge(self.scale)
+                graph.addEdge(edgeTuple[0], edgeTuple[1], edgeTuple[2]) 
+        answer = graph.dijkstra(0)
+        answer_edge_to = answer[0]
+        answer_dist_to = answer[1]
+
+        for graphId in range(self.kDiv):
             
-
-
+            for _ in range(self.trial):
+                if funcId == 0: response =  graph.dijkstra(0, kList[graphId])
+                else: response = graph.bellmanFord(0, kList[graphId])
+            response_edge_to = response[0]
+            response_dist_to = response[1]
+            mark_edge = 0
+            mark_dist = 0
+            for j in range(len(response_edge_to)):
+                if response_edge_to[j] == answer_edge_to[j]: mark_edge+=1
+                if response_dist_to[j] == answer_dist_to[j]: mark_dist+=1
+            mark = mark_edge + mark_dist
+            accuracyK = mark/(len(response_edge_to)*2) * 100
+            accuracy[graphId] = accuracyK
+        #(plot initiated
+        plt.plot(kList, accuracy)
+        plt.xlabel("k value of graph")
+        plt.ylabel("Accuracy(%)")
+        plt.show()
+        #plot completed)
+            
+t = GraphTestOnK()
+t.testAccuracy(0)
 
 
 #graph density
