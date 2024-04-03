@@ -2,6 +2,7 @@ import unittest
 import random
 import math
 import timeit
+import matplotlib.pyplot as plt
 #Part 1
 
 #1.1
@@ -29,7 +30,6 @@ class IndexMinPQ:
         
     def insert(self, key, value):
         insertIndex = self.size
-        print("key: ", key)
         self.val[key] = value
         self.pm[key] = insertIndex
         self.im[insertIndex] = key
@@ -298,8 +298,8 @@ class GraphTest(unittest.TestCase):
 class GraphTestOnSize:
     def __init__(self, scale) -> None:
         self.scale: int = scale
-        self.trial = 10
-        self.scaleList: list[int] = [3*(2**i) for i in range(1,scale+1)]
+        self.trial = 5
+        self.scaleList: list[int] = [2*(2**i) for i in range(1,scale+1)]
         self.sizeEList = [None for i in range(scale)]
         for i in range(scale):
             self.sizeEList[i] = (self.scaleList[i]**2)//4
@@ -312,29 +312,48 @@ class GraphTestOnSize:
         return (s, e, weight)
 
         
-    def testTime(self):
+    def testTime(self, funcId: int):
         scaleList = self.scaleList
         sizeEList =self.sizeEList
+        count = 0
+        #(time record initiated
         intervals = [None for _ in range(self.scale)]
         for i in range(self.scale):
             sizeE = sizeEList[i]
             graph = directedWeightedGraph(scaleList[i])
-            for j in range(sizeE):
+            for _ in range(sizeE):
                 edgeTuple = self.randEdge(scaleList[i])
                 graph.addEdge(edgeTuple[0], edgeTuple[1], edgeTuple[2])
 
             #one graph assembled complete
             time = 0
-            for i in range(self.trial):
-                init = timeit.default_timer()
-                graph.dijkstra(0)
-                interval = timeit.default_timer() - init
+            for _ in range(self.trial):
+                if id == 0:
+                    init = timeit.default_timer()
+                    graph.dijkstra(0)
+                    interval = timeit.default_timer() - init
+                else:
+                    init = timeit.default_timer()
+                    graph.bellmanFord(0)
+                    interval = timeit.default_timer() - init
                 time += interval
             time = time/self.trial
             intervals[i] = time
+            count +=1
+            print(count/self.scale*100, "%")
+        print(intervals)
+        #time record completed)
+        
+        #(plot initiated
+        plt.plot(scaleList, intervals)
+        plt.xlabel("scale of graph(#V)")
+        plt.ylabel("time(sec)")
+        plt.show()
+        #plot completed)
+        
 
-test1 = GraphTestOnSize(10)
-test1.testTime()
+test1 = GraphTestOnSize(8)
+test1.testTime(0)
             
 
 
