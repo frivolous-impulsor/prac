@@ -271,6 +271,36 @@ class directedWeightedGraph:
 
         return (dist_to, edge_to)
     
+    def A_Star(graph, source, destination, heuristic):
+        predecessors = {node: None for node in range(graph.numV)}
+        costs = {node: float('inf') for node in range(graph.numV)}
+        costs[source] = 0
+        open_set = IndexMinPQ(graph.numV)
+        open_set.insert(source, heuristic(source))
+        
+        while not open_set.size == 0:
+            current_node = open_set.pop()[0]
+            
+            if current_node == destination:
+                break
+            
+            for edge in graph.vList(current_node):
+                neighbor = edge.final()
+                new_cost = costs[current_node] + edge.weight
+                if new_cost < costs[neighbor]:
+                    costs[neighbor] = new_cost
+                    predecessors[neighbor] = current_node
+                    open_set.insert(neighbor, new_cost + heuristic(neighbor))
+        
+        path = []
+        current_node = destination
+        while current_node is not None:
+            path.append(current_node)
+            current_node = predecessors[current_node]
+        path.reverse()
+        
+        return predecessors, path
+    
 class GraphTest(unittest.TestCase):
     def setUp(self) -> None:
         self.route = directedWeightedGraph(7)
@@ -296,7 +326,7 @@ class GraphTest(unittest.TestCase):
 #For extremly dense(any vertex reaches any other vertex), numE -> numV**2
 #For moderately dense, we pick mid -> numV**2 // 2
 class GraphTestOnSize:
-    def __init__(self, scale, density: int, kVal: int = math.inf) -> None:
+    def __init__(self, scale=10, density=50, kVal: int = math.inf) -> None:
         if density > 100 and density < 0:
             raise ValueError("density only [0, 100], 0 being extremely sparse and 100 being extremely dense")
         self.kVal = kVal
@@ -500,9 +530,14 @@ class GraphTestOnK:
         plt.ylabel("Accuracy(%)")
         plt.show()
         #plot completed)
-            
+r = GraphTestOnSize()
+r.testTime(1)
+
+
 t = GraphTestOnK()
 t.testAccuracy(0)
+
+
 
 
 #graph density
