@@ -2206,4 +2206,3 @@ def unique_ways(n):
         memo[n] = unique_ways(n - 1) + unique_ways(n - 2)
     return memo[n]
 
-print(unique_ways(5))
