@@ -3,27 +3,29 @@ import re
 from bs4 import BeautifulSoup
 
 
+def fetchCourse(url: str):
+    courseInstance = urlopen(url)
+    courseByte = courseInstance.read()
+    courseCode = courseByte.decode('utf-8')
+    #title
+    soup = BeautifulSoup(courseCode, "html.parser")
+    title = soup.find("h1").string
+    print(title)
+    
+    #content
+    courseContent = ""
+    contentSoup = soup.find("div", id="course-content")
+    contents = contentSoup.findAll('p')
+    for content in contents:
+        courseContent += content.string
+    print(courseContent)
 
-courseInstance = urlopen("https://kurser.ku.dk/course/ndak23003u/2024-2025")
-courseByte = courseInstance.read()
-courseCode = courseByte.decode('utf-8')
-
-soup = BeautifulSoup(courseCode, "html.parser")
-title = soup.find("h1").string
-print(title)
-
-courseContent = ""
-contentSoup = soup.find("div", id="course-content")
-contents = contentSoup.findAll('p')
-for content in contents:
-    courseContent += content.string
-print(courseContent)
-
-pattern = "<dd>Block .</dd>"
-searchResult = re.search(pattern, courseCode)
-result = searchResult.group()
-result = re.sub("<dd>Block ", "", result)
-result = re.sub("</dd>", "", result)
-print(result)
+    #block number
+    pattern = "<dd>Block .</dd>"
+    searchResult = re.search(pattern, courseCode)
+    result = searchResult.group()
+    result = re.sub("<dd>Block ", "", result)
+    result = re.sub("</dd>", "", result)
+    print(result)
 
 
