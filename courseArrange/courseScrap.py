@@ -10,9 +10,18 @@ soup = BeautifulSoup(courseCode, "html.parser")
 title = soup.find("h1").string
 print(title)
 
+courseContent = ""
+contentSoup = soup.find("div", id="course-content")
+contents = contentSoup.findAll('p')
+for content in contents:
+    courseContent += content.string
+print(courseContent)
+
 pattern = "<dd>Block .</dd>"
 searchResult = re.search(pattern, courseCode)
 result = searchResult.group()
 result = re.sub("<dd>Block ", "", result)
 result = re.sub("</dd>", "", result)
 print(result)
+
+
