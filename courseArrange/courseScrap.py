@@ -2,6 +2,8 @@ from urllib.request import urlopen
 import re
 from bs4 import BeautifulSoup
 
+
+
 courseInstance = urlopen("https://kurser.ku.dk/course/ndak23003u/2024-2025")
 courseByte = courseInstance.read()
 courseCode = courseByte.decode('utf-8')
