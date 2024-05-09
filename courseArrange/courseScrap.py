@@ -11,7 +11,7 @@ def fetchCourse(url: str):
     soup = BeautifulSoup(courseCode, "html.parser")
     title = soup.find("h1").string
     print(title)
-    
+
     #content
     courseContent = ""
     contentSoup = soup.find("div", id="course-content")
@@ -29,3 +29,4 @@ def fetchCourse(url: str):
     print(result)
 
 
+ 
