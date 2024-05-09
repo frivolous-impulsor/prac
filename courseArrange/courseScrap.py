@@ -3,6 +3,9 @@ import re
 from bs4 import BeautifulSoup
 
 
+def searchCourse():
+    "todo"
+
 def fetchCourse(url: str):
     courseInstance = urlopen(url)
     courseByte = courseInstance.read()
