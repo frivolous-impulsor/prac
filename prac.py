@@ -2196,13 +2196,3 @@ class Tree:
 
 # t.print_bt()
                 
-memo = {}
-def unique_ways(n):
-    if n < 0:
-        raise ValueError("no neg stair state")
-    if n <= 2:
-        return n
-    if n not in memo:
-        memo[n] = unique_ways(n - 1) + unique_ways(n - 2)
-    return memo[n]
-
