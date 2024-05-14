@@ -21,7 +21,6 @@ class SortingAlgos:
                 i -=1
         return list
         
-    
 
 instance = SortingAlgos()
 randlist = instance.randList(10)
