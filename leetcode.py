@@ -49,3 +49,4 @@ class Solution:
         
     
 solution = Solution()
+print("hello python")
