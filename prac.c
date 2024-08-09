@@ -133,8 +133,32 @@ int fifo(){     //parent process will display any input received from child proc
     
 }
 
-int main() {
-    fifo();
+int execPrac(){
+    int pid = fork();
+    if(pid == -1){
+        printf("fork failed\n");
+        return 1;
+    }
 
+    if(pid == 0){
+        execlp("ping", "ping", "-c", "3", "google.com", NULL);
+    }else {
+        wait(NULL);
+        printf("execution successful\n");
+    }
+
+    return 0;
+}
+
+int directOutputToFile(){
+    int outputFile = open("outputFile.txt", O_WRONLY | O_CREAT, 0777);
+    dup2(outputFile, STDOUT_FILENO);
+    close(outputFile);
+    execlp("ping", "ping", "-c", "3", "google.com", NULL);
+    
+}
+
+int main() {
+    directOutputToFile();
     return 0;
 } 
