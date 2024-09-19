@@ -1,0 +1,12 @@
+---
+triple:          'x86_64-apple-darwin'
+binary-path:     '/Users/machine_1997/prac/prac'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _pipePrac, symObjAddr: 0x0, symBinAddr: 0x1000007B0, symSize: 0x1A0 }
+  - { offsetInCU: 0x41, offset: 0x41, size: 0x8, addend: 0x0, symName: _pipePrac, symObjAddr: 0x0, symBinAddr: 0x1000007B0, symSize: 0x1A0 }
+  - { offsetInCU: 0xAF, offset: 0xAF, size: 0x8, addend: 0x0, symName: _sumWith2Processes, symObjAddr: 0x1A0, symBinAddr: 0x100000950, symSize: 0x1F0 }
+  - { offsetInCU: 0x1AD, offset: 0x1AD, size: 0x8, addend: 0x0, symName: _fifo, symObjAddr: 0x390, symBinAddr: 0x100000B40, symSize: 0x150 }
+  - { offsetInCU: 0x229, offset: 0x229, size: 0x8, addend: 0x0, symName: _execPrac, symObjAddr: 0x4E0, symBinAddr: 0x100000C90, symSize: 0xA0 }
+  - { offsetInCU: 0x251, offset: 0x251, size: 0x8, addend: 0x0, symName: _directOutputToFile, symObjAddr: 0x580, symBinAddr: 0x100000D30, symSize: 0x70 }
+  - { offsetInCU: 0x279, offset: 0x279, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x5F0, symBinAddr: 0x100000DA0, symSize: 0x1C }
+...

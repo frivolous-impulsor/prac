@@ -129,7 +129,7 @@ int fifo(){     //parent process will display any input received from child proc
     
         close(fd);
     }
-
+    return 1;
     
 }
 
@@ -150,15 +150,21 @@ int execPrac(){
     return 0;
 }
 
-int directOutputToFile(){
+void directOutputToFile(){
     int outputFile = open("outputFile.txt", O_WRONLY | O_CREAT, 0777);
     dup2(outputFile, STDOUT_FILENO);
     close(outputFile);
     execlp("ping", "ping", "-c", "3", "google.com", NULL);
-    
 }
 
 int main() {
-    directOutputToFile();
+    pid_t pid = fork();
+    if(pid == 0){
+        printf("this is parent process of id %d\n", getpid());
+        wait(NULL);
+    }else{
+        printf("this is a child process of id %d\n", pid);
+        exit(0);
+    }
     return 0;
 } 
