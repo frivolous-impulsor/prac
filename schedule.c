@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <signal.h>
 
 typedef struct {
     int *elements;   // Array to store elements
@@ -192,6 +193,7 @@ int main() {
         while(readyQueue.size > 0){
             int currentTaskId = extractMin(&readyQueue);
             sleep(2); //assuming each task requires 2 seconds of CPU execution time
+            kill(currentTaskId, SIGKILL);
             printf("task %d finished execution\n", currentTaskId);
             for(int i = 0; i < readyQueue.size ; i++){
                 readyQueue.priority[i] -=2; //decrease the deadline of all remaining tasks by 2 sec
