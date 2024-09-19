@@ -154,7 +154,6 @@ int createRandomProcess(Task* t){
         return 1;
     }
     if (pid != 0){
-        printf("A process of id %d is created\n", pid);
         t->pid = getpid();
         int deadline;
         getRandomInt(7, &deadline); //each 
@@ -182,6 +181,7 @@ int main() {
         while(true){
             Task t = {0,0,0}; //initiallize a task of {pid, deadline, capacity}
             createRandomProcess(&t);
+            printf("task %d of dealine %d is created\n", t.pid, t.deadline);
             insert(&readyQueue, t.pid, t.deadline);
             int sleepTime;
             getRandomInt(3, &sleepTime);
@@ -192,6 +192,7 @@ int main() {
         while(readyQueue.size > 0){
             int currentTaskId = extractMin(&readyQueue);
             sleep(2); //assuming each task requires 2 seconds of CPU execution time
+            printf("task %d finished execution\n", currentTaskId);
             for(int i = 0; i < readyQueue.size ; i++){
                 readyQueue.priority[i] -=2; //decrease the deadline of all remaining tasks by 2 sec
             }
