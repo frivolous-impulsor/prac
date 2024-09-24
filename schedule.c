@@ -148,16 +148,15 @@ int getRandomInt(int max, int* pResult){
 }
 
 int createRandomProcess(Task* t){
-
     pid_t pid = fork();
     if (pid == -1){
         printf("fork failed\n");
         return 1;
     }
     if (pid != 0){
-        t->pid = getpid();
+        t->pid = pid;
         int deadline;
-        getRandomInt(7, &deadline); //each 
+        getRandomInt(20, &deadline); //each 
         t->deadline = deadline;
         t->capacity = 2;
         wait(NULL);
@@ -171,33 +170,48 @@ int createRandomProcess(Task* t){
 
 
 int main() {
-    IndexedPriorityQueue readyQueue = *createIndexedPriorityQueue(25);
+    IndexedPriorityQueue readyQueue = *createIndexedPriorityQueue(30);
     pid_t pid = fork();
     if(pid == -1){
         printf("fork failed\n");
         return 1;
     }
     if(pid == 0){
-        //child process for generating tasks sparadically
+        //chile process for selecting and executing tasks
         while(true){
-            Task t = {0,0,0}; //initiallize a task of {pid, deadline, capacity}
+            if(readyQueue.size > 0){
+                printf("REACHED EXECUTION PART\n");
+
+                int currentTaskId = extractMin(&readyQueue);
+                sleep(2); //assuming each task requires 2 seconds of CPU execution time
+                kill(currentTaskId, SIGKILL);
+                printf("task %d finished execution\n", currentTaskId);
+                for(int i = 0; i < readyQueue.size ; i++){
+                    if (readyQueue.priority[i] <= 2){
+                        printf("task %d failed\n", readyQueue.elements[i]);
+                    }else{
+                        readyQueue.priority[i] -=2;
+                    }
+                    ; //decrease the deadline of all remaining tasks by 2 sec
+                }
+            }else{
+                sleep(2);
+            }
+            
+        }
+
+
+        
+    }else{
+        //parent process for generating tasks sparadically
+        while(true){
+            Task t; //initiallize a task of {pid, deadline, capacity}
             createRandomProcess(&t);
             printf("task %d of dealine %d is created\n", t.pid, t.deadline);
             insert(&readyQueue, t.pid, t.deadline);
             int sleepTime;
             getRandomInt(3, &sleepTime);
             sleep(sleepTime); //enqueue new task to ready queue sparadically
-        }
-    }else{
-        //parent process for selecting and executing tasks
-        while(readyQueue.size > 0){
-            int currentTaskId = extractMin(&readyQueue);
-            sleep(2); //assuming each task requires 2 seconds of CPU execution time
-            kill(currentTaskId, SIGKILL);
-            printf("task %d finished execution\n", currentTaskId);
-            for(int i = 0; i < readyQueue.size ; i++){
-                readyQueue.priority[i] -=2; //decrease the deadline of all remaining tasks by 2 sec
-            }
         }
     }
     
