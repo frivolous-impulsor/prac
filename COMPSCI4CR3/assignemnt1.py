@@ -68,8 +68,18 @@ def test():
     q1 = LFSR(20)
     q1.setP(q1.str2List("11010100010001101010"))
     q1.setInitVal(q1.str2List("00110110010101101111"))
-    cipher = q1.encode(q1.str2List("00111101011100111000000111001100010011010110110100"))
-    print(q1.decode(cipher))
-    print(q1.str2List("00111101011100111000000111001100010011010110110100"))
-    print(q1.list2Str(q1.str2List("00111101011100111000000111001100010011010110110100")))
+    
+    plainText = q1.str2List("00111101011100111000000111001100010011010110110100")
+    length = len("00111101011100111000000111001100010011010110110100")
+    keystream = q1.generateKey(len("00111101011100111000000111001100010011010110110100"))
+    ciphertex = q1.encode(plainText)
+    print(ciphertex)
+    print(plainText)
+    print(keystream)
+    
+    guess = [0 for _ in plainText]
+    for i in range(length):
+        guess[i] = ciphertex[i] ^ plainText[i]
+    print(guess)
+
 test()
