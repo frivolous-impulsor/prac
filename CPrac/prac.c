@@ -9,6 +9,9 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <pthread.h>
+
 
 
 int pipePrac(){
@@ -157,14 +160,79 @@ void directOutputToFile(){
     execlp("ping", "ping", "-c", "3", "google.com", NULL);
 }
 
-int main() {
+void handle_sigcont(){
+    printf("input x: \n");
+    fflush(stdout);
+}
+
+void signalHandling(){
+    struct sigaction sa;
+    sa.sa_handler = &handle_sigcont;
+    sa.sa_flags = SA_RESTART;
+    sigaction(SIGCONT, &sa, NULL);
+
+    int x;
+    printf("input x:");
+    fflush(stdout);
+    scanf("%d", &x);
+    printf("x is : %d", x);
+}
+
+void handle_sigusr1(){
+    printf("\nit's 15!\n");
+}
+
+int pCommSig(){
     pid_t pid = fork();
+    if(pid == -1){
+        return 1;
+    }
     if(pid == 0){
-        printf("this is parent process of id %d\n", getpid());
-        wait(NULL);
-    }else{
-        printf("this is a child process of id %d\n", pid);
+        //child process
+        sleep(5);
+        kill(getppid(), SIGUSR1);
         exit(0);
+    }else{
+        //parent process
+        struct sigaction sa;
+        sa.sa_handler = &handle_sigusr1;
+        sa.sa_flags = SA_RESTART;
+        sigaction(SIGUSR1, &sa, NULL);
+        int x;
+        printf("what is the result of 3 x 5: ");
+        scanf("%d", &x);
+        if(x == 15){
+            printf("correct\n");
+        }else{
+            printf("incorrect\n");
+        }
+        kill(pid, SIGKILL);
+        wait(NULL);
     }
     return 0;
-} 
+}
+
+//dynamically allocated memory
+int memoryAllocation(){
+    int* arr = malloc(sizeof(int)*256); //allocates a section of memory and returns the pointer to the memory 
+    if(arr == NULL){ //memory allocation failed
+        return 1;
+    }
+    memset(arr, 50, sizeof(int)*256);
+    int i;
+    for(i = 0; i<256; i++){
+        printf("%d ", arr[i]);
+    }
+    free(arr);
+
+    return 0;
+}
+
+
+int main(void)
+{
+    memoryAllocation();
+
+    return 0;
+}
+
