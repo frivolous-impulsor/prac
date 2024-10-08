@@ -64,6 +64,7 @@ int returnValOfThread(){
 }
 
 int main(int argc, char* argv[]){
-    returnValOfThread();
+    char str[] = "hello";
+    printf("%02x\n", str);
     return 0;
 }
