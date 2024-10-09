@@ -2,12 +2,14 @@
 triple:          'x86_64-apple-darwin'
 binary-path:     '/Users/machine_1997/prac/Cryptography/assignment2'
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _Ma, symObjAddr: 0x0, symBinAddr: 0x100000BD0, symSize: 0x30 }
-  - { offsetInCU: 0x41, offset: 0x41, size: 0x8, addend: 0x0, symName: _Ma, symObjAddr: 0x0, symBinAddr: 0x100000BD0, symSize: 0x30 }
-  - { offsetInCU: 0x85, offset: 0x85, size: 0x8, addend: 0x0, symName: _CAPsig0, symObjAddr: 0x30, symBinAddr: 0x100000C00, symSize: 0x10 }
-  - { offsetInCU: 0xBB, offset: 0xBB, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x40, symBinAddr: 0x100000C10, symSize: 0x90 }
-  - { offsetInCU: 0x16F, offset: 0x16F, size: 0x8, addend: 0x0, symName: _rightRotate, symObjAddr: 0xD0, symBinAddr: 0x100000CA0, symSize: 0x70 }
-  - { offsetInCU: 0x1CF, offset: 0x1CF, size: 0x8, addend: 0x0, symName: _printStrInBinary, symObjAddr: 0x140, symBinAddr: 0x100000D10, symSize: 0xA0 }
-  - { offsetInCU: 0x259, offset: 0x259, size: 0x8, addend: 0x0, symName: _padding, symObjAddr: 0x1E0, symBinAddr: 0x100000DB0, symSize: 0x190 }
-  - { offsetInCU: 0x30E, offset: 0x30E, size: 0x8, addend: 0x0, symName: _Ch, symObjAddr: 0x370, symBinAddr: 0x100000F40, symSize: 0x1D }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _rightShift, symObjAddr: 0x0, symBinAddr: 0x100000AF0, symSize: 0x40 }
+  - { offsetInCU: 0x41, offset: 0x41, size: 0x8, addend: 0x0, symName: _rightShift, symObjAddr: 0x0, symBinAddr: 0x100000AF0, symSize: 0x40 }
+  - { offsetInCU: 0x85, offset: 0x85, size: 0x8, addend: 0x0, symName: _Ma, symObjAddr: 0x40, symBinAddr: 0x100000B30, symSize: 0x30 }
+  - { offsetInCU: 0xC9, offset: 0xC9, size: 0x8, addend: 0x0, symName: _SIG0, symObjAddr: 0x70, symBinAddr: 0x100000B60, symSize: 0x50 }
+  - { offsetInCU: 0xF1, offset: 0xF1, size: 0x8, addend: 0x0, symName: _rightRotate, symObjAddr: 0xC0, symBinAddr: 0x100000BB0, symSize: 0x80 }
+  - { offsetInCU: 0x151, offset: 0x151, size: 0x8, addend: 0x0, symName: _SIG1, symObjAddr: 0x140, symBinAddr: 0x100000C30, symSize: 0x50 }
+  - { offsetInCU: 0x179, offset: 0x179, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x190, symBinAddr: 0x100000C80, symSize: 0x90 }
+  - { offsetInCU: 0x22D, offset: 0x22D, size: 0x8, addend: 0x0, symName: _printStrInBinary, symObjAddr: 0x220, symBinAddr: 0x100000D10, symSize: 0xA0 }
+  - { offsetInCU: 0x2B7, offset: 0x2B7, size: 0x8, addend: 0x0, symName: _padding, symObjAddr: 0x2C0, symBinAddr: 0x100000DB0, symSize: 0x190 }
+  - { offsetInCU: 0x36C, offset: 0x36C, size: 0x8, addend: 0x0, symName: _Ch, symObjAddr: 0x450, symBinAddr: 0x100000F40, symSize: 0x1D }
 ...

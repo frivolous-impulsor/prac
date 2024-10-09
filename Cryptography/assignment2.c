@@ -9,18 +9,17 @@ int padding(char *str, int size, char *output);
 
 int rightRotate(int num, int iterations);
 
+int rightShift(int num, int iterations);
 
 int messageSchedule(char* padded, int len);
 
 int Ch(int x, int y, int z);
-int Ma(int x, int y, int z){
-    return (x & y) ^ (x & ~z) ^ (y & z);
-}
-int CAPsig0(int x){
-    int result;
-    return 0;
-}
+int Ma(int x, int y, int z);
 
+int SIG0(int x);
+int SIG1(int x);
+int sig0(int x);
+int sig1(int x);
 
 
 int main(int argc, char* argv[]){
@@ -35,10 +34,10 @@ int main(int argc, char* argv[]){
     h5 = 0x9b05688c;
     h6 = 0x1f83d9ab;
     h7 = 0x5be0cd19;
-    int a = 0x94;
+    int a = 0x80000000;
     printf("before %02x\n", a);
 
-    a = rightRotate(a, 6);
+    a = rightShift(a, 2);
     printf("after %02x\n", a);
 
     return 0;
@@ -56,7 +55,7 @@ int printStrInBinary(char *str, int size){
     }
     return 0;
 }
-
+//preprocess-padding
 int padding(char *str, int size, char *output){
     int l = size * 8;   //length of original str in bits
     long long length64 = l;
@@ -82,21 +81,46 @@ int padding(char *str, int size, char *output){
     return totalSizeBit;
 }
 
+//Compression
+
 int rightRotate(int num, int iterations){    //rotate
     int i, shadow, lsDigit;
     shadow = 1;
     for(i = 0; i< iterations; i++){
         lsDigit = shadow & num;
-        num = num >> 1;
+        num = (unsigned int)num >> 1;
         if (lsDigit){
             num = num | 0x80000000;
-        } else{
-            num = num & 0x7fffffff;
         }
     }
     return num;
 }
 
+int rightShift(int num, int iterations){
+    int i;
+    num = (unsigned int)num >> iterations;
+    return num;
+}
+
 int Ch(int x, int y, int z){
     return (x & y) ^ (x & z);
+}
+
+int Ma(int x, int y, int z){
+    return (x & y) ^ (x & ~z) ^ (y & z);
+}
+int SIG0(int x){
+    return rightRotate(x, 2) ^ rightRotate(x, 23) ^ rightRotate(x, 12);
+}
+
+int SIG1(int x){
+    return rightRotate(x, 16) ^ rightRotate(x, 21) ^ rightRotate(x, 15);
+}
+
+int sig0(int x){
+    return rightRotate(x, 17) ^ rightRotate(x, 11) ^ rightShift(x, 13); 
+}
+
+int sig1(int x){
+    return rightRotate(x, 7) ^ rightRotate(x, 9) ^ rightShift(x, 12); 
 }
