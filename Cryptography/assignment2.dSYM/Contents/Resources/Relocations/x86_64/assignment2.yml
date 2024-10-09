@@ -1,0 +1,13 @@
+---
+triple:          'x86_64-apple-darwin'
+binary-path:     '/Users/machine_1997/prac/Cryptography/assignment2'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _Ma, symObjAddr: 0x0, symBinAddr: 0x100000BD0, symSize: 0x30 }
+  - { offsetInCU: 0x41, offset: 0x41, size: 0x8, addend: 0x0, symName: _Ma, symObjAddr: 0x0, symBinAddr: 0x100000BD0, symSize: 0x30 }
+  - { offsetInCU: 0x85, offset: 0x85, size: 0x8, addend: 0x0, symName: _CAPsig0, symObjAddr: 0x30, symBinAddr: 0x100000C00, symSize: 0x10 }
+  - { offsetInCU: 0xBB, offset: 0xBB, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x40, symBinAddr: 0x100000C10, symSize: 0x90 }
+  - { offsetInCU: 0x16F, offset: 0x16F, size: 0x8, addend: 0x0, symName: _rightRotate, symObjAddr: 0xD0, symBinAddr: 0x100000CA0, symSize: 0x70 }
+  - { offsetInCU: 0x1CF, offset: 0x1CF, size: 0x8, addend: 0x0, symName: _printStrInBinary, symObjAddr: 0x140, symBinAddr: 0x100000D10, symSize: 0xA0 }
+  - { offsetInCU: 0x259, offset: 0x259, size: 0x8, addend: 0x0, symName: _padding, symObjAddr: 0x1E0, symBinAddr: 0x100000DB0, symSize: 0x190 }
+  - { offsetInCU: 0x30E, offset: 0x30E, size: 0x8, addend: 0x0, symName: _Ch, symObjAddr: 0x370, symBinAddr: 0x100000F40, symSize: 0x1D }
+...
