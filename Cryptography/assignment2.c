@@ -85,7 +85,7 @@ void compress(int *W){
 int hashing(char* msg, int size);
 
 int main(int argc, char* argv[]){
-    char secret[] = "COMPSCI 4CR3";
+    char secret[] = "The quick brown fox jumped over the lazy dog.";
     int size = strlen(secret);
     hashing(secret, size);
     
@@ -108,7 +108,7 @@ int hashing(char* msg, int size){
     numM = paddedLen/64;
     char Ms[numM][64];
     for(i = 0; i<numM; i++){
-        strncpy(Ms[i], padded+(i*64), 64);
+        memcpy(Ms[i], padded+i*64, 64);
     }
 
     //Operate M by M from now on
