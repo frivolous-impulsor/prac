@@ -37,27 +37,26 @@ int SIG1(int x);
 int sig0(int x);
 int sig1(int x);
 
-int messageSchedule(char* block, int *W){  //calling this function for each 512bits block -> 64 char
+void messageSchedule(char* block, int *W){  //calling this function for each 512bits block -> 64 char
     //scheduled is an array of int of size 64
 
-    int i, j, counter, current;
+    int i, j, current;
     for(i = 0; i<16; i++){
         current = 0;
         for(j = 0; j< 4; j++){
-            current = current | (int)block[i * j];
+            current = current | (int)block[i*4 + j];
             if(j < 3){
                 current = current << 8;
             }
         }
         W[i] = current;
-    }    
-    for(i = 16; i < 64; i++){
-        W[i] = sig1(W[i-2]) + W[i-7] + sig0(W[i-15]) + W[j-16];
     }
-    return 0;
+    for(i = 16; i < 64; i++){
+        W[i] = sig1(W[i-2]) + W[i-7] + sig0(W[i-15]) + W[i-16];
+    }
 }
 
-int compress(int *W){
+void compress(int *W){
     enum letter {a,b,c,d,e,f,g,h};
     int L[8];
     int i, j, k, T1, T2;
@@ -66,34 +65,27 @@ int compress(int *W){
     }
 
     for(i = 0; i< 64; i++){
-        T1 = h + SIG1(L[e]) + Ch(L[e],L[f],L[g]) + K[i] + W[i];
+        T1 = L[h] + SIG1(L[e]) + Ch(L[e],L[f],L[g]) + K[i] + W[i];
         T2 = SIG0(L[a]) + Ma(L[a],L[b],L[c]);
-        L[a] = T1 + T2;
-        L[b] = L[a];
-        L[c] = L[b];
-        L[d] = L[c];
-        L[e] = L[d]+T1;
-        L[f] = L[e];
-        L[g] = L[f];
         L[h] = L[g];
+        L[g] = L[f];
+        L[f] = L[e];
+        L[e] = L[d] + T1;
+        L[d] = L[c];
+        L[c] = L[b];
+        L[b] = L[a];
+        L[a] = T1 + T2;
     }
     for(k = 0; k<8; k++){
         H[k] = H[k] + L[k];
     }
-    
 
-
-    return 0;
 }
-
-
-
-
 
 int hashing(char* msg, int size);
 
 int main(int argc, char* argv[]){
-    char secret[] = "COMPSCI 4CR4";
+    char secret[] = "COMPSCI 4CR3";
     int size = strlen(secret);
     hashing(secret, size);
     
@@ -108,9 +100,10 @@ int hashing(char* msg, int size){
     int i, numM;
     int W[64];
     //preprocessing/padding the input msg
-    char padded[size + 512];
+    char padded[size + 64];
     int paddedLen = padding(msg, size, padded)/8;   //length of padded msg in bytes
 
+    
     //Dividing padded to 512-bit blocks
     numM = paddedLen/64;
     char Ms[numM][64];
@@ -126,6 +119,7 @@ int hashing(char* msg, int size){
         compress(W);
     }
     //H will now be the hashed values
+    
     return 0;
 }
 

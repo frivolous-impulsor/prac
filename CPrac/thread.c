@@ -64,10 +64,8 @@ int returnValOfThread(){
 }
 
 int main(int argc, char* argv[]){
-    enum letter {
-        a, b, c, d, e, hello
-    };
-    printf("%d\n", a);
-    printf("%d\n", hello);
+    int a = 0;
+    int b = 0;
+    printf("%d\n", a^b);
     return 0;
 }
