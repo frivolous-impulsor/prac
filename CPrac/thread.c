@@ -64,8 +64,10 @@ int returnValOfThread(){
 }
 
 int main(int argc, char* argv[]){
-    int a = 0;
-    int result = a | 0x80000000;
-    printf("result: %d\n", result);
+    enum letter {
+        a, b, c, d, e, hello
+    };
+    printf("%d\n", a);
+    printf("%d\n", hello);
     return 0;
 }
