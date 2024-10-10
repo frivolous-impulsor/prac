@@ -85,12 +85,35 @@ void compress(int *W){
 int hashing(char* msg, int size);
 
 int main(int argc, char* argv[]){
-    char secret[] = "The quick brown fox jumped over the lazy dog.";
-    int size = strlen(secret);
-    hashing(secret, size);
+    int fileSize;
+    char* msg = 0;
+    //read the file name from arg
+    if(argc != 2){
+        printf("Needs Exactly One Argument, Being File Name For SHA256");
+        return 1;
+    }
+    FILE *pF = fopen(argv[1], "r");
+    if(pF == NULL){
+        printf("File Name/Path Not Valid");
+        return 2;
+    }
+
+    fseek(pF, 0, SEEK_END);
+    fileSize = ftell(pF);
+    fseek(pF, 0, SEEK_SET);
+    msg = malloc(fileSize);
+    if (msg) {
+        fread(msg, 1, fileSize, pF);
+    }
+    
+
+    fclose(pF);
+
+    int size = strlen(msg);
+    hashing(msg, size);
     
     for(int i = 0; i<8; i++){
-        printf("%02x ", H[i]);
+        printf("%02x", H[i]);
     }
 
     return 0;

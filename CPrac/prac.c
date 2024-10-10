@@ -229,10 +229,27 @@ int memoryAllocation(){
 }
 
 
-int main(void)
-{
-    memoryAllocation();
+int main(int argc, char* argv[])
+{   
+    int fileSize;
+    char* msg = 0;
+    FILE *pF = fopen(argv[1], "r");
+    if(pF == NULL){
+        printf("File Name/Path Not Valid");
+        return 2;
+    }
 
+    fseek(pF, 0, SEEK_END);
+    fileSize = ftell(pF);
+    fseek(pF, 0, SEEK_SET);
+    msg = malloc(fileSize);
+    if (msg) {
+        fread(msg, 1, fileSize, pF);
+    }
+    
+
+    fclose(pF);
+    printf("message: %s\n", msg);
     return 0;
 }
 

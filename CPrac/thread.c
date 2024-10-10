@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <time.h>
+#include <string.h>
 
 int numMails = 0;
 pthread_mutex_t mutex; //define/create a mutex
@@ -64,8 +65,6 @@ int returnValOfThread(){
 }
 
 int main(int argc, char* argv[]){
-    int a = 0;
-    int b = 0;
-    printf("%d\n", a^b);
+
     return 0;
 }
