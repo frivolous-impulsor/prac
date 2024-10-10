@@ -37,57 +37,16 @@ int SIG1(int x);
 int sig0(int x);
 int sig1(int x);
 
-void messageSchedule(char* block, int *W){  //calling this function for each 512bits block -> 64 char
-    //scheduled is an array of int of size 64
+void messageSchedule(char* block, int *W);
 
-    int i, j, current;
-    for(i = 0; i<16; i++){
-        current = 0;
-        for(j = 0; j< 4; j++){
-            current = current | (int)block[i*4 + j];
-            if(j < 3){
-                current = current << 8;
-            }
-        }
-        W[i] = current;
-    }
-    for(i = 16; i < 64; i++){
-        W[i] = sig1(W[i-2]) + W[i-7] + sig0(W[i-15]) + W[i-16];
-    }
-}
-
-void compress(int *W){
-    enum letter {a,b,c,d,e,f,g,h};
-    int L[8];
-    int i, j, k, T1, T2;
-    for(j = 0; j<8; j++){
-        L[j] = H[j]; 
-    }
-
-    for(i = 0; i< 64; i++){
-        T1 = L[h] + SIG1(L[e]) + Ch(L[e],L[f],L[g]) + K[i] + W[i];
-        T2 = SIG0(L[a]) + Ma(L[a],L[b],L[c]);
-        L[h] = L[g];
-        L[g] = L[f];
-        L[f] = L[e];
-        L[e] = L[d] + T1;
-        L[d] = L[c];
-        L[c] = L[b];
-        L[b] = L[a];
-        L[a] = T1 + T2;
-    }
-    for(k = 0; k<8; k++){
-        H[k] = H[k] + L[k];
-    }
-
-}
+void compress(int *W);
 
 int hashing(char* msg, int size);
 
 int main(int argc, char* argv[]){
     int fileSize;
     char* msg = 0;
-    //read the file name from arg
+    //Get input from a separate txt file
     if(argc != 2){
         printf("Needs Exactly One Argument, Being File Name For SHA256");
         return 1;
@@ -105,48 +64,20 @@ int main(int argc, char* argv[]){
     if (msg) {
         fread(msg, 1, fileSize, pF);
     }
-    
-
     fclose(pF);
-
     int size = strlen(msg);
     hashing(msg, size);
     
     for(int i = 0; i<8; i++){
         printf("%02x", H[i]);
     }
-
+    free(msg);
     return 0;
 }
 
-int hashing(char* msg, int size){
-    int i, numM;
-    int W[64];
-    //preprocessing/padding the input msg
-    char padded[size + 64];
-    int paddedLen = padding(msg, size, padded)/8;   //length of padded msg in bytes
 
-    
-    //Dividing padded to 512-bit blocks
-    numM = paddedLen/64;
-    char Ms[numM][64];
-    for(i = 0; i<numM; i++){
-        memcpy(Ms[i], padded+i*64, 64);
-    }
 
-    //Operate M by M from now on
-    for(i = 0; i< numM; i++){
-        //Message Schedule/expansion from 64 bytes = 18 ints to 256 bytes 64 ints
-        messageSchedule(Ms[i], W);
-        //Compress the W and mutate the H
-        compress(W);
-    }
-    //H will now be the hashed values
-    
-    return 0;
-}
-
-int printStrInBinary(char *str, int size){
+int printStrInBinary(char *str, int size){  //for debugging preprocessing padding
     int i,j;
     for(i = 0; i< size; i++){
         char byte = str[i];
@@ -182,7 +113,7 @@ int padding(char *str, int size, char *output){
     return totalSizeBit;
 }
 
-//Compression
+//Aux Functions
 
 int rightRotate(int num, int iterations){    //rotate
     int i, shadow, lsDigit;
@@ -224,4 +155,78 @@ int sig0(int x){
 
 int sig1(int x){
     return rightRotate(x, 7) ^ rightRotate(x, 9) ^ rightShift(x, 12); 
+}
+
+//message scheduling, expanding the block from 64 bytes to 64*4 bytes
+
+void messageSchedule(char* block, int *W){  //calling this function for each 512bits block -> 64 char
+    //scheduled is an array of int of size 64
+
+    int i, j, current;
+    for(i = 0; i<16; i++){
+        current = 0;
+        for(j = 0; j< 4; j++){
+            current = current | (int)block[i*4 + j];
+            if(j < 3){
+                current = current << 8;
+            }
+        }
+        W[i] = current;
+    }
+    for(i = 16; i < 64; i++){
+        W[i] = sig1(W[i-2]) + W[i-7] + sig0(W[i-15]) + W[i-16];
+    }
+}
+
+//compress the expanded block to 4*8 bytes H
+
+void compress(int *W){
+    enum letter {a,b,c,d,e,f,g,h};
+    int L[8];
+    int i, j, k, T1, T2;
+    for(j = 0; j<8; j++){
+        L[j] = H[j]; 
+    }
+
+    for(i = 0; i< 64; i++){
+        T1 = L[h] + SIG1(L[e]) + Ch(L[e],L[f],L[g]) + K[i] + W[i];
+        T2 = SIG0(L[a]) + Ma(L[a],L[b],L[c]);
+        L[h] = L[g];
+        L[g] = L[f];
+        L[f] = L[e];
+        L[e] = L[d] + T1;
+        L[d] = L[c];
+        L[c] = L[b];
+        L[b] = L[a];
+        L[a] = T1 + T2;
+    }
+    for(k = 0; k<8; k++){
+        H[k] = H[k] + L[k];
+    }
+
+}int hashing(char* msg, int size){
+    int i, numM;
+    int W[64];
+    //preprocessing/padding the input msg
+    char padded[size + 64];
+    int paddedLen = padding(msg, size, padded)/8;   //length of padded msg in bytes
+
+    
+    //Dividing padded to 512-bit blocks
+    numM = paddedLen/64;
+    char Ms[numM][64];
+    for(i = 0; i<numM; i++){
+        memcpy(Ms[i], padded+i*64, 64);
+    }
+
+    //Operate M by M from now on
+    for(i = 0; i< numM; i++){
+        //Message Schedule/expansion from 64 bytes = 18 ints to 256 bytes 64 ints
+        messageSchedule(Ms[i], W);
+        //Compress the W and mutate the H
+        compress(W);
+    }
+    //H will now be the hashed values
+    
+    return 0;
 }
