@@ -143,7 +143,125 @@ int sumPrimesThreads(){
     return 0;
 }
 
+
+pthread_mutex_t gasMutex;
+pthread_cond_t condGas;
+int feulValue = 0;
+
+void* feuling(void* arg){
+    for(int i = 0; i<5; i++){
+        pthread_mutex_lock(&gasMutex);
+        feulValue += 60;
+        printf("feul added, current feul at %d\n", feulValue);
+
+        pthread_mutex_unlock(&gasMutex);
+        pthread_cond_broadcast(&condGas);
+
+        sleep(1);
+
+
+    }
+    
+    return NULL;
+}
+
+void* gettingGas(void* arg){
+    pthread_mutex_lock(&gasMutex);
+    while(feulValue < 40){
+        printf("insufficient feul... Current feul at %d\n", feulValue);
+        pthread_cond_wait(&condGas, &gasMutex);
+        //releasing the mutex; wait until a signal sends in
+        //when a signal sends in; reacquire the mutex
+    }
+    feulValue -= 40;
+    printf("got feul, current feul at %d\n", feulValue);
+    pthread_mutex_unlock(&gasMutex);
+    return NULL;
+}
+
+
+int gasStation(){
+    int i;
+    pthread_mutex_init(&gasMutex, NULL);
+    pthread_cond_init(&condGas, NULL);
+    //gas station has 2 parties, feuler that fills the tank and the car that drains the tank
+
+    //thread 0 being feuler and 1 being car
+    pthread_t threads[5];
+
+    
+    
+    if(pthread_create(&threads[0], NULL, &feuling, NULL)){
+        return 1;
+    }
+    for(i = 1; i< 5; i++){
+        if(pthread_create(&threads[i], NULL, &gettingGas, NULL)){
+        return i;
+        }
+    }
+    
+
+    for(i = 0; i<5; i++){
+        if(pthread_join(threads[0], NULL)){
+            return i + 5;
+        }
+
+    }
+
+    pthread_mutex_destroy(&gasMutex);
+    pthread_cond_destroy(&condGas);
+    return 0;
+}
+
+pthread_mutex_t stoveMs[4];
+int stoves[] = {100, 100, 100, 100};
+void* cook(){
+    int stoveI = 0;
+    int feulNeeded = (rand() % 20) + 10;
+    while(1){
+        if(feulNeeded <= stoves[stoveI] && pthread_mutex_trylock(&stoveMs[stoveI]) == 0){
+            //successful
+            stoves[stoveI] -= feulNeeded;
+            sleep(1);
+            printf("chef done, used %d feul at stove %d\n", feulNeeded, stoveI);
+            pthread_mutex_unlock(&stoveMs[stoveI]);
+            return NULL;
+        }else{
+            stoveI = (stoveI + 1) % 4;
+        }
+    }
+
+    return NULL;
+}
+//10 chefs cook on 4 stoves, each has gas 100. Each chef cooks once and consume 10-30.
+int chefCooking(){
+    int i;
+    int numChef = 10;
+    pthread_t threads[numChef];
+    for(i = 0; i < 4; i++){
+        pthread_mutex_init(&stoveMs[i], NULL);
+    }
+    srand(time(NULL));
+
+    for(i = 0; i<numChef; i++){
+        if(pthread_create(&threads[i], NULL, &cook, NULL)){
+            return i;
+        }
+    }
+
+    for(i = 0; i<numChef; i++){
+        if(pthread_join(threads[i], NULL)){
+            return numChef + i;
+        }
+    }
+
+    for(i = 0; i < 4; i++){
+        pthread_mutex_destroy(&stoveMs[i]);
+    }
+    return 0;
+}
+
 int main(int argc, char* argv[]){
-    sumPrimesThreads();
+    chefCooking();
     return 0;
 }
