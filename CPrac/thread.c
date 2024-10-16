@@ -4,6 +4,9 @@
 #include <pthread.h>
 #include <time.h>
 #include <string.h>
+#include "./barrier.c"
+
+
 
 int numMails = 0;
 pthread_mutex_t mutex; //define/create a mutex
@@ -261,7 +264,61 @@ int chefCooking(){
     return 0;
 }
 
+#define DICE_NUM 8
+int diceVals[DICE_NUM] = {0};  
+int maxDieVal = 0;
+pthread_t dieThread[DICE_NUM];
+pthread_mutex_t dieMutex;
+pthread_barrier_t dieBarrier;
+
+
+void* roll(void* arg){
+    int val = rand() % 5 + 1;
+    printf("die number %d rolled %d\n", *(int*)arg, val);
+    pthread_mutex_lock(&dieMutex);
+    if(val > maxDieVal){
+        maxDieVal = val;
+    }
+    pthread_mutex_unlock(&dieMutex);
+    pthread_barrier_wait(&dieBarrier);
+
+    if(val == maxDieVal){
+        printf("Die Number %d is the winner!\n", *(int*)arg);
+    }
+
+    return (void*)arg;
+}
+
+
+
+int diceWithBarrier(){
+    int i;
+    int* pTemp;
+
+    srand(time(NULL));
+    pthread_mutex_init(&dieMutex, NULL);
+    pthread_barrier_init(&dieBarrier, NULL, DICE_NUM);
+    for(i = 0; i < DICE_NUM; i++){
+        int *index = malloc(sizeof(int));
+        *index = i;
+        if(pthread_create(&dieThread[i], NULL, &roll, index)){
+            return i;
+        }
+    }
+
+    for(i = 0; i < DICE_NUM; i++){
+        if(pthread_join(dieThread[i], (void**)&pTemp)){
+            return DICE_NUM + i;
+        }
+        free(pTemp);
+    }
+    pthread_mutex_destroy(&dieMutex);
+    pthread_barrier_destroy(&dieBarrier);
+
+    return 0;
+}
+
 int main(int argc, char* argv[]){
-    chefCooking();
+    diceWithBarrier();
     return 0;
 }
