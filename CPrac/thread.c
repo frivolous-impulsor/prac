@@ -318,6 +318,8 @@ int diceWithBarrier(){
     return 0;
 }
 
+int 
+
 int main(int argc, char* argv[]){
     diceWithBarrier();
     return 0;
