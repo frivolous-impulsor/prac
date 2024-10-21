@@ -5,6 +5,7 @@
 #include <time.h>
 #include <string.h>
 #include "./barrier.c"
+#include <semaphore.h>
 
 
 
@@ -318,9 +319,122 @@ int diceWithBarrier(){
     return 0;
 }
 
-int 
+
+#define USER_NUM 15
+#define USER_NUM_MAX 12
+sem_t queueSema;
+pthread_t users[USER_NUM];
+
+void* login(void* arg){
+    printf("thread %d waiting for login\n", *(int*)arg);
+    sem_wait(&queueSema);
+    printf("thread %d logged in\n", *(int*)arg);
+    sleep(rand()%5 + 1);
+    printf("thread %d logged out\n", *(int*)arg);
+    sem_post(&queueSema);
+    free(arg);
+    return NULL;
+}
+
+int semaphoreQueue(){
+    int i;
+    srand(time(NULL));
+    sem_init(&queueSema, 0, USER_NUM_MAX);
+
+    for(i = 0; i<USER_NUM; i++){
+        int* tid = malloc(sizeof(int));
+        *tid = i;
+        if(pthread_create(&users[i], NULL, &login, tid)){
+            return i;
+        }
+    }
+    for(i = 0; i<USER_NUM; i++){
+        if(pthread_join(users[i], NULL)){
+            return i + USER_NUM;
+        }
+    }
+
+    sem_destroy(&queueSema);
+    return 0;
+}
+
+#define SHELF_MAX 10
+#define THREAD_NUM 2
+int shelf[SHELF_MAX];
+int pointer;
+pthread_mutex_t shelfMutex;
+sem_t productSema;
+sem_t spotSema;
+pthread_t th[THREAD_NUM];
+
+void* consume(void* arg){
+    int consumed;
+    while(1){
+        sem_wait(&productSema);
+        //take from shelf
+        pthread_mutex_lock(&shelfMutex);
+        consumed = shelf[pointer-1];
+        pointer--;
+        pthread_mutex_unlock(&shelfMutex);
+        sem_post(&spotSema);
+        //consume
+        printf("Consumed %d\n", consumed);
+        sleep(1);
+        
+    }
+    return NULL;
+}
+
+void* produce(void* arg){
+    int produced;
+    while(1){
+        //produce
+        produced = rand()%100+1;
+        //put on shelf
+        sem_wait(&spotSema);
+        pthread_mutex_lock(&shelfMutex);
+        shelf[pointer] = produced;
+        pointer++;
+        pthread_mutex_unlock(&shelfMutex);
+        sem_post(&productSema);
+        sleep(1);
+        
+    }
+    return NULL;
+}
+
+int producerConsumer(){
+    srand(time(NULL));
+    int i;
+    pointer = 0;
+    pthread_mutex_init(&shelfMutex, NULL);
+    sem_init(&productSema, 0, 0);
+    sem_init(&spotSema, 0, SHELF_MAX);
+    for(i = 0; i<THREAD_NUM; i++){
+        if(i){
+            if(pthread_create(&th[i], NULL, &consume, NULL)){
+                return i;
+            }
+        } else{
+            if(pthread_create(&th[i], NULL, &produce, NULL)){
+                return i;
+            }
+        }
+
+    }
+
+    for(i = 0; i<THREAD_NUM; i++){
+        if(pthread_join(th[i], NULL)){
+            return i + THREAD_NUM;
+        }
+    }
+    pthread_mutex_destroy(&shelfMutex);
+    sem_destroy(&productSema);
+    sem_destroy(&spotSema);
+    return 0;
+}
 
 int main(int argc, char* argv[]){
-    diceWithBarrier();
+    producerConsumer();
     return 0;
 }

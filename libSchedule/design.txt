@@ -1,9 +1,0 @@
-input:
-manager time regulation sheet
-    time 
-{student time available sheet}
-
-box
-
-output:
-time sheet with names

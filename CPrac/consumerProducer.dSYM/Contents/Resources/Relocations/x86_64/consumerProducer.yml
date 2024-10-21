@@ -1,0 +1,15 @@
+---
+triple:          'x86_64-apple-darwin'
+binary-path:     '/Users/machine_1997/prac/CPrac/consumerProducer'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _consume, symObjAddr: 0x0, symBinAddr: 0x100000C90, symSize: 0x90 }
+  - { offsetInCU: 0x4D, offset: 0x4D, size: 0x8, addend: 0x0, symName: _shelf, symBinAddr: 0x100002010, symSize: 0x0 }
+  - { offsetInCU: 0x75, offset: 0x75, size: 0x8, addend: 0x0, symName: _pointer, symBinAddr: 0x100002000, symSize: 0x0 }
+  - { offsetInCU: 0x8A, offset: 0x8A, size: 0x8, addend: 0x0, symName: _shelfMutex, symBinAddr: 0x100002038, symSize: 0x0 }
+  - { offsetInCU: 0xE9, offset: 0xE9, size: 0x8, addend: 0x0, symName: _productSema, symBinAddr: 0x100002004, symSize: 0x0 }
+  - { offsetInCU: 0x109, offset: 0x109, size: 0x8, addend: 0x0, symName: _spotSema, symBinAddr: 0x100002078, symSize: 0x0 }
+  - { offsetInCU: 0x11E, offset: 0x11E, size: 0x8, addend: 0x0, symName: _th, symBinAddr: 0x100002080, symSize: 0x0 }
+  - { offsetInCU: 0x1C8, offset: 0x1C8, size: 0x8, addend: 0x0, symName: _consume, symObjAddr: 0x0, symBinAddr: 0x100000C90, symSize: 0x90 }
+  - { offsetInCU: 0x1FE, offset: 0x1FE, size: 0x8, addend: 0x0, symName: _produce, symObjAddr: 0x90, symBinAddr: 0x100000D20, symSize: 0x90 }
+  - { offsetInCU: 0x242, offset: 0x242, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x120, symBinAddr: 0x100000DB0, symSize: 0x190 }
+...
