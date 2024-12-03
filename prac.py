@@ -2186,13 +2186,3 @@ class Tree:
                 self.right.add_num(num)
     
 
-# t = Tree(5)
-# t.add_num(4)
-# t.add_num(6)
-# t.add_num(0)
-# t.add_num(10)
-# t.add_num(6)
-
-
-# t.print_bt()
-                
