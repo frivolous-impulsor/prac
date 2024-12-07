@@ -4,9 +4,15 @@
 #include <unistd.h>
 #include <math.h>
 #include <stdbool.h>
+#include <time.h>
 
 int main(){
-    int x = 10/10;
-    printf("%d", x);
-    return 0;
+    srand(clock());
+    int i, r;
+    for(i = 0; i<100; i++){
+        r = rand(); 
+        printf("%d\n", r);
+    }
+    
+
 }
