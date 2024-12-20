@@ -10,8 +10,7 @@ WINDOW *create_newwin(int height, int width, int starty, int startx);
 
 int main(int argc, char *argv[])
 {	WINDOW *my_win, *displayPad;
-	int startx0, starty0, width0, height0;
-    int leftx, lefty, rightx, righty, printPos;
+	int startx0, starty0, width0, height0, displayStart;
     int y,x;
     int count;
     char msg[50];
@@ -39,7 +38,7 @@ int main(int argc, char *argv[])
     my_win = create_newwin(height0, width0, starty0, startx0);
 
     //displayPad = create_newwin(6, width0, 1, 1);
-    printPos = 1;
+    displayStart = 1;
 
     
     while(1){
@@ -50,17 +49,16 @@ int main(int argc, char *argv[])
         box(my_win, 0, 0);
 
 
-        mvwprintw(displayPad, printPos,2, msg);
-        wclrtoeol(displayPad);
-        box(displayPad, 0, 0);
-        wrefresh(displayPad);
-        printPos ++;
+        mvwprintw(displayPad, displayStart,2, msg);
+        prefresh(displayPad, pad)
+        displayStart ++;
 
         //refresh();
         //wrefresh(my_win);		/* Show that box 		*/
     }
     ch = getch();
 		
+    delwin(displayPad);
 	endwin();			/* End curses mode		  */
 	return 0;
 }
