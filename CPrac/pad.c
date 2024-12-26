@@ -2,11 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_MSG_SIZE 100
+#define MSG_LEN_LIMIT 256
 
 int main() {
-    char *msg = calloc(MAX_MSG_SIZE, sizeof(char));
-    char *buf = calloc(MAX_MSG_SIZE, sizeof(char));
+    char *msg = calloc(MSG_LEN_LIMIT, sizeof(char));
     // Initialize ncurses
     initscr();
     cbreak();
@@ -38,7 +37,7 @@ int main() {
     int visible_height = rows - 2;
     int visible_width = cols - 2;
 
-    mvprintw(rows - 1, 0, "type for messaging , 'q' to quit: ");
+    mvprintw(rows - 1, 0, "type 'a' for messaging , 'q' to quit: ");
     refresh();
 
     writeLine = 0;
@@ -58,31 +57,30 @@ int main() {
             // case KEY_RIGHT:
             //     if (pad_left + visible_width < pad_width) pad_left++;
             //     break;
-            default:
+            case 'a':
                 echo();
                 move(rows-1, 0);
                 clrtoeol();
                 refresh();
-                mvprintw(rows - 1, 0, ":%c", ch);
+                mvprintw(rows - 1, 0, ":");
                 mvgetstr(rows - 1, 2,  msg);
                 //integrate the first letter to rest of msg
-                strcat(buf, (char*)(&ch));
-                strcat(buf, msg);
-                mvwprintw(pad, writeLine, 0, "me: %s", buf);
+                mvwprintw(pad, writeLine, 0, "me: %s", msg);
                 clrtoeol();
                 refresh();
                 noecho();
                 writeLine++;
                 move(rows-1, 0);
                 if (writeLine > visible_height) pad_top++;
-                memset(buf, 0, MAX_MSG_SIZE);
+                break;
+            default:
+                break;
         }
 
         // Display the pad content within the visible window
         prefresh(pad, pad_top, pad_left, 0, 0, visible_height, visible_width);
     }
     free(msg);
-    free(buf);
     // Cleanup
     delwin(pad);
     endwin();
