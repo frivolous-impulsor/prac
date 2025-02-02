@@ -7,12 +7,8 @@
 #include <time.h>
 
 int main(){
-    srand(clock());
-    int i, r;
-    for(i = 0; i<100; i++){
-        r = rand(); 
-        printf("%d\n", r);
-    }
-    
+    int x;
+    printf("%d\n", x);
+    return 0;
 
 }

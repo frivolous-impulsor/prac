@@ -1,0 +1,22 @@
+Kristen
+Kristen enter code
+window and door lock
+Kristen enter code again
+window and door unlocked
+
+Holly
+Bruce scratches door
+door open
+Bruce goes out
+door closes automatically
+Bruce sractches door
+door open
+Bruce comes back
+door closes automatically
+
+John
+open the door
+door close automatically
+John press the button
+door opens
+
