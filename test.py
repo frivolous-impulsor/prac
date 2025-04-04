@@ -1,3 +1,5 @@
+import math
+
 def q3():
     k = 10
     r = 0.4
@@ -37,10 +39,70 @@ def waysCoin(n: int, c: list[int]):
     waysChart = dict()
     res = waysRec(len(c)-1, n, waysChart, c)
     print(res)
+    
 
+def dot(a, b):
+    return a[0] * b[0] + a[1] *b[1]
 
-res = waysCoin(4, [1,5,10])
-res = waysCoin(6, [1,5,10])
-res = waysCoin(10, [1,5,10])
-res = waysCoin(14, [1,5,10])
-res = waysCoin(20, [1,5,10])
+def norm(a):
+    return math.sqrt(dot(a, a))
+
+def is34Q(x, y):
+    return (y<0)
+
+def getDir(x, y):
+    a = [x,y]
+    b = [1,0]
+    if a == [0,0]:
+        raise Exception("speed must be non zero")
+    raw = int(math.acos(dot(a, b)/(norm(a)*norm(b)))/(2*math.pi)*360)
+    if is34Q(x,y):
+        return 360-raw
+    return raw
+
+def reverse(speedX, speedY):
+    speed = int(math.sqrt(speedX**2 + speedY**2))
+    direction = getDir(speedX, speedY)
+    print("original:")
+    print(f"speedX: {speedX}")
+    print(f"speedY: {speedY}")
+    print(f"speed: {speed}")
+    print(f"direction: {direction}")
+
+    speedX = -speedX
+    speedY = -speedY
+    direction = getDir(speedX, speedY)
+
+    print("\nafter calling reverse():")
+    print(f"speedX: {speedX}")
+    print(f"speedY: {speedY}")
+    print(f"speed: {speed}")
+    print(f"direction: {direction}")
+
+def reverseX(speedX, speedY):
+    speed = int(math.sqrt(speedX**2 + speedY**2))
+    direction = getDir(speedX, speedY)
+    print("original:")
+    print(f"speedX: {speedX}")
+    print(f"speedY: {speedY}")
+    print(f"speed: {speed}")
+    print(f"direction: {direction}")
+
+    speedX = -speedX
+    direction = getDir(speedX, speedY)
+
+    print("\nafter calling reverse():")
+    print(f"speedX: {speedX}")
+    print(f"speedY: {speedY}")
+    print(f"speed: {speed}")
+    print(f"direction: {direction}")
+
+def q1():
+    inputList = [[0,20], [-20, 0], [-30, -100], [1, 1], [50,-50]]
+    count = 1
+    for input in inputList:
+        print(count)
+        reverseX(input[0], input[1])
+        count+=1
+        print('\n')
+q1()
