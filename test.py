@@ -1,108 +1,101 @@
 import math
+import itertools
 
-def q3():
-    k = 10
-    r = 0.4
-    s = 0.3
-    ratio1 = r/s
-    ratio2 = r/(2*s)
-    comp1 = (1-(ratio1)**(k+1))/(1 - ratio1)
-    comp2 = ((ratio2)**(k+1))/(1 - ratio2)
-    pi_0 = (comp1 + comp2)**(-1)
-    
-    reg1 = 509.216
-    reg2 = 0.451
-    expected = (reg1 + reg2) * pi_0
-    print(expected)
+miu1 = 5
+miu2 = 10
+miu3 = 10
+miu4 = 1
 
-def waysRec(i, j, waysChart: dict, c):
-    if((i, j) in waysChart.keys()):
-        return waysChart[(i,j)]
-    
-    if(i == -1):
-        if j == 0:
-            waysChart[(i, j)] = 1
-        else:
-            waysChart[(i, j)] = 0
-        return waysChart[(i, j)]
+miu_list = [miu1, miu2, miu3, miu4]
+
+lam1 = 1
+lam2 = 0.5
+lam3 = 0.5
+lam4 = 0.1
+sumLam = lam1+lam2+lam3+lam4
+lam_list = [lam1, lam2, lam3, lam4]
+
+p1 = lam1/sumLam
+p2 = lam2/sumLam
+p3 = lam3/sumLam
+p4 = lam4/sumLam
+
+p_list = [p1, p2, p3, p4]
+
+def lam_M(R_list, M):
+    sum = 0
+    for i in range(len(R_list)):
+        sum += (p_list[i] * R_list[i])
+    return M/sum
 
 
 
-    if j < c[i]:
-        waysChart[(i,j)] = waysRec(i-1, j, waysChart, c)
+def R_i_M(i, preR_list, preLam):
+    result = 1/miu_list[i]
+    result += ((p_list[i] * preLam*preR_list[i])/miu_list[i])
+    return result
+
+
+def findR(iteration):
+    if(iteration < 2):
+        result = []
+        for i in range(4):
+            result.append(R_i_M(i, [0,0,0,0], 0));
+        return result
     else:
-        waysChart[(i,j)] = waysRec(i-1, j, waysChart, c) + waysRec(i, j-c[i], waysChart, c)
-    return waysChart[(i,j)]
-        
+        result = []
 
-def waysCoin(n: int, c: list[int]):
-    waysChart = dict()
-    res = waysRec(len(c)-1, n, waysChart, c)
-    print(res)
-    
-
-def dot(a, b):
-    return a[0] * b[0] + a[1] *b[1]
-
-def norm(a):
-    return math.sqrt(dot(a, a))
-
-def is34Q(x, y):
-    return (y<0)
-
-def getDir(x, y):
-    a = [x,y]
-    b = [1,0]
-    if a == [0,0]:
-        raise Exception("speed must be non zero")
-    raw = int(math.acos(dot(a, b)/(norm(a)*norm(b)))/(2*math.pi)*360)
-    if is34Q(x,y):
-        return 360-raw
-    return raw
-
-def reverse(speedX, speedY):
-    speed = int(math.sqrt(speedX**2 + speedY**2))
-    direction = getDir(speedX, speedY)
-    print("original:")
-    print(f"speedX: {speedX}")
-    print(f"speedY: {speedY}")
-    print(f"speed: {speed}")
-    print(f"direction: {direction}")
-
-    speedX = -speedX
-    speedY = -speedY
-    direction = getDir(speedX, speedY)
-
-    print("\nafter calling reverse():")
-    print(f"speedX: {speedX}")
-    print(f"speedY: {speedY}")
-    print(f"speed: {speed}")
-    print(f"direction: {direction}")
-
-def reverseX(speedX, speedY):
-    speed = int(math.sqrt(speedX**2 + speedY**2))
-    direction = getDir(speedX, speedY)
-    print("original:")
-    print(f"speedX: {speedX}")
-    print(f"speedY: {speedY}")
-    print(f"speed: {speed}")
-    print(f"direction: {direction}")
-
-    speedX = -speedX
-    direction = getDir(speedX, speedY)
-
-    print("\nafter calling reverse():")
-    print(f"speedX: {speedX}")
-    print(f"speedY: {speedY}")
-    print(f"speed: {speed}")
-    print(f"direction: {direction}")
+        preR = findR(iteration-1)
+        print(preR)
+        lam = lam_M(preR, iteration-1)
+        print(lam)
+        for i in range(4):
+            R_i = R_i_M(i, preR, lam)
+            result.append(R_i)
+        return result
 
 def q1():
-    inputList = [[0,20], [-20, 0], [-30, -100], [1, 1], [50,-50]]
-    count = 1
-    for input in inputList:
-        print(count)
-        reverseX(input[0], input[1])
-        count+=1
-        print('\n')
-q1()
+    R_list = [0.5676767676767677, 0.12626262626262627, 0.12626262626262627, 1.6363636363636362]
+    V_list = [1.111, 0.556, 0.556, 0.111]
+    sum = 0
+    for i in range(4):
+        sum+= (R_list[i]*V_list[i])
+    print(4/sum)
+
+def q2():
+    possibleStates = [[]]
+
+def partitions(n, k):
+    for c in itertools.combinations(range(n+k-1), k-1):
+        yield [b-a-1 for a,b in zip((-1,)+c,c+(n+k-1,))]
+
+
+def q1b():
+    states = list(partitions(4,4))
+
+    targetStates = []
+    for state in states:
+        if(state[3] == 2):
+            targetStates.append(state)
+
+    sum = 0
+    for state in states:
+        stateProduct = 1
+        for i in range(4):
+            stateProduct = stateProduct* (lam_list[i]/miu_list[i])**(state[i])
+        sum += stateProduct
+
+    c = sum**(-1)
+
+    probTotal = 0
+    for state in targetStates:
+        product = 1
+        for i in range(4):
+            product *= ((lam_list[i]/miu_list[i])**(state[i]))
+        product *=c
+        probTotal += product
+    print(f"p = {probTotal}")
+
+
+    print(f"c = {c}")
+
