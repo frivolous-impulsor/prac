@@ -99,3 +99,29 @@ def q1b():
 
     print(f"c = {c}")
 
+def calcR(inRate, lam_formula_list, miu_list):
+    lam_list = []
+    for i in range(len(lam_formula_list)):
+        lam_list.append(lam_formula_list[i] * inRate)
+    N = 0
+
+    for i in range(4):
+        N += lam_list[i]/(miu_list[i] - lam_list[i])
+    R = N/inRate
+    return R
+
+
+def q2():
+    lamStar = 1/2
+    lam_formula_list = [10 , 5, 5, 1]
+    miu_list = [5, 10, 10, 1]
+    inRates = [0.9, 0.7, 0.5, 0.3, 0.1]
+    for i in range(len(inRates)):
+        inRates[i] *= lamStar
+
+    for inRate in inRates:
+        R = calcR(inRate, lam_formula_list, miu_list)
+        print(f"in rate: {inRate} R: {R}")
+
+
+q2()
