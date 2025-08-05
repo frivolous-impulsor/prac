@@ -38,9 +38,45 @@ def waysCoin(n: int, c: list[int]):
     res = waysRec(len(c)-1, n, waysChart, c)
     print(res)
 
+def q2b():
+    lam = 10
+    miu = 11
+    c = 2
 
-res = waysCoin(4, [1,5,10])
-res = waysCoin(6, [1,5,10])
-res = waysCoin(10, [1,5,10])
-res = waysCoin(14, [1,5,10])
-res = waysCoin(20, [1,5,10])
+    pi_0 = (1 + (lam/miu) + 0.5 * (lam/miu)**2*(1/(1-lam/(2*miu))))**(-1)
+    #print(pi_0)
+
+    pi_1 = lam/miu*pi_0
+    #print(pi_1)
+    result2 = 10*(1 - pi_1 - pi_0)
+    print(result2)
+
+def q2c():
+    lam = 10
+    miu = 11
+    c = 3
+    pi_0 = (1 + lam/miu + 0.5*(lam/miu)**2 + 1/6*(lam/miu)**3*(1/(1-lam/(3*miu))))**(-1)
+    #print(pi_0)
+    pi_1 = lam/miu*pi_0
+    #print(pi_1)
+    pi_2 = 1/2*(lam/miu)**2*pi_0
+    #print(pi_2)
+
+    result3 = 10*(1-pi_0 - pi_1 - pi_2)
+    print(result3)
+
+def q2d(x):
+    cost1 = 9.091 + x
+    cost2 = 2.841 + 2*x
+    cost3 = 0.718 + 3*x
+
+    print(cost1)
+    print(cost2)
+    print(cost3)
+
+def q3():
+    mean1 = 3/666.667
+    rate1 = 222.222
+    rate2 = 1/(4.5*10**(-3))
+    print(1/(222.222-10))
+q3()

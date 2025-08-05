@@ -1,0 +1,1 @@
+=IF(AND(RateTargetNum>=1,RateTargetNum<=4),"LOW",IF(AND(RateTargetNum>=5,RateTargetNum<=10),"MEDIUM",IF(AND(RateTargetNum>=12,RateTargetNum<=16),"HIGH",IF(AND(RateTargetNum>=20,RateTargetNum<=25),"VERY HIGH","UNKNOWN"))))
