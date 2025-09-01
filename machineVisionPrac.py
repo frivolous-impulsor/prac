@@ -1,6 +1,7 @@
 import numpy as np
-from math import sin, cos, pi
+from math import sin, cos, pi, sqrt
 import matplotlib.pyplot as plt
+from warping import *
 
 
 class PerspProj:
@@ -68,53 +69,66 @@ class PerspProj:
         return sensorVec
     
 
+def generatePrettyGradient():
+    n = 256
+    im = np.zeros((n,n,3))  #n by n by 3, 3 corresponding RGB color dimension
+    for i in range(n):
+        im[i,:,0] = i*0.0039
+        im[i,:,1] = 1-i*0.0039
+        im[i,:,2] = 1
 
+    plt.imshow(im)    
+    plt.show()
 
+def removeDistortion():
+    im = Image.open("IMG_0625.JPEG")
+    [ydim, xdim] = im.size
+    mid = round(max(xdim, ydim)/2)
 
+    n = 100
+    dst = griddify(shape_to_rect(im.size), n, n)
+    src = dst
 
+    k = 0.0000005
+    dst = dst - mid
+
+    dist = [0, 233, 467, 701, 935]
+    distSize = len(dist)
+
+    grid = np.zeros((distSize, distSize, 2))
+    for row in range(distSize):
+        for col in range(distSize):
+            grid[row, col] = [dist[col], dist[row]]
+
+    plt.plot(dst)
+    plt.show()
     
+
+def jpegCompression():
+    pix = np.random.randint(255, size=(8,8))
+    quant = np.ones((8,8)) * 2
+     
+    DCT = np.zeros((8,8))
+    for row in range(8):
+        for col in range(8):
+            a_u = sqrt(1/8) if row ==0 else sqrt(x/8)
+            a_v = sqrt(2/8) if col ==0 else sqrt(x/8)
+            a = a_u*a_v
+            sum = 0
+            for x in range(8):
+                for y in range(8):
+                    sum+= pix[x,y]* cos((2*x+1)* row* pi/16)* cos((2*y+1)* col* pi/16)
+            DCT[row, col] = a*sum
+
+    quantized = np.floor(np.divide(DCT, quant))
+
+    f, axarr = plt.subplots(1,2)
+    axarr[0].imshow(pix)
+    axarr[1].imshow(quantized)
+    plt.show()
 
 
 def main():
-    p = PerspProj()
-    p.setK(1)
-    p.setR(pi/6, pi/6, 0)
-    p.setM(-0.5, -0.5, 100)
-
-    points = [[0, 0, 0],
-              [1,0,0],
-              [1,1,0],
-              [0,1,0],
-              [0,0,1],
-              [1,0,1],
-              [1,1,1],
-              [0,1,1]]
-    
-    translated_points = []
-
-    for point in points:
-        C = p.getC(point[0], point[1], point[2])
-        S = p.getS(C)
-        lambdaVal = 20  #pixel/length
-        p_vec = lambdaVal * S
-        x = float(p_vec[0]/p_vec[2])
-        y = float(p_vec[1]/p_vec[2])
-        translated_points.append([x,y])
-    
-    coord_x, coord_y = zip(*translated_points)
-    print(coord_x)
-    print(coord_y)
-
-    
-    fig, ax = plt.subplots()             # Create a figure containing a single Axes.
-    ax.scatter(list(coord_x), list(coord_y), s=50, facecolor='C0', edgecolor='k')  # Plot some data on the Axes.
-    plt.show()                           # Show the figure.
-
-    
-    
-
-
-
-
+    jpegCompression()
 
 main()
