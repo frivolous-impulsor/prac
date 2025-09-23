@@ -2,7 +2,7 @@ import numpy as np
 from math import sin, cos, pi, sqrt
 import matplotlib.pyplot as plt
 from warping import *
-from scipy import ndimage
+from scipy import ndimage, signal
 from PIL import Image
 
 
@@ -185,7 +185,114 @@ def convolution2():
     plt.subplot(1,3,3)
     plt.imshow(img_g, cmap='gray')
     plt.show()
+
+def convolutionSeparable():
+    img_og = 1.0 * plt.imread('IMG_0625.JPEG')
+    img = np.dot(img_og[...,:3], [0.299, 0.589, 0.114])
+    #If, after verifying through SVD, a matrix(kernel) A is separable, meaning A = u * v where u is a col vector and v is a row vector, 
+    #   then we can convolute an image by firt u and then v
+
+    #Get u, v from 2D kernel
+    kernel = np.array([
+        [-0.125,-0.25,-0.125],
+        [0,0,0],
+        [0.125, 0.25, 0.125]
+    ])
+
+    (U, s, V) = np.linalg.svd(kernel)
+    #u is the first col of U
+    u = U[:, 0]
+    v = V[0]
+
+    #Compute convolution by u, v
+    g1 = signal.sepfir2d(img, u, v)
+    
+    g2 = signal.sepfir2d(img, v, u)
+
+    g = np.sqrt(g1**2 + g2**2)
+    #plot
+    plt.figure(figsize=(20,5))
+    plt.subplot(1,3,1)
+    plt.imshow(img)
+    plt.subplot(1,3,2)
+    plt.imshow(g1)
+    plt.subplot(1,3,3)
+    plt.imshow(g2)
+
+    plt.subplot(1,3,1)
+    plt.imshow(g)
+
+    plt.show()
+
+def fourierTransform2D():
+    img = plt.imread('IMG_0625.JPEG')
+    img_gray = np.dot(img[..., :3], [0.299, 0.589, 0.114]).T
+    fourier = np.fft.fft2(img_gray)
+    fourierShifted = np.fft.fftshift(fourier)
+    fourierShiftedMagnitude = np.abs(fourierShifted)
+    plt.figure(figsize=(20,10))
+    plt.subplot(1,2,1)
+    plt.imshow(fourierShiftedMagnitude)
+    plt.subplot(1,2,2)
+    plt.imshow(np.log(fourierShiftedMagnitude))
+    plt.show()
+
+#An example funciton desmonstrating gaussian pyramid, a techique of blur + down-sizing to reduce the source image for easier computation
+def gaussianPyramid():
+    im = plt.imread('IMG_0625.JPEG')
+    h = [1/16, 4/16, 6/16, 4/16, 1/16]
+    N = 3
+
+    pyramids = [] #final result, an array of images demonstrating a series of blur + downsize
+    pyramids.append(im)
+    for k in range(1, N):
+        tempImg = np.zeros(im.shape)
+
+        #for each color channel
+        for z in range(3):
+            tempImg[:, :, z] = signal.sepfir2d(im[:, :, z], h, h)
+
+        #down sample
+        tempImg = tempImg[0: -1: 2, 0: -1: 2, :]    #from top to bottom, left to right, sample every other pixel
+        im = tempImg
+        pyramids.append(im)
+
+
+    fig, ax = plt.subplots(nrows= 1, ncols=N, figsize=(15, 7), dpi=72, sharex=True, sharey=True)
+    
+    for k in range(N):
+        ax[k].imshow(pyramids[k]/255)
+        plt.show()
+
+def sharpenImgConvolution():
+    #unChatSolitaire img file, reformated for ease of calculation and file save
+    img = plt.imread("unChatSolitaire.png")
+    imgFormatted = img[:, :, :3]
+
+    #Format kernel for sharpening, obtained from img + (img - blured) = 2*img - blured(gaussian blur)
+    #Value obtained from https://blog.demofox.org/2022/02/26/image-sharpening-convolution-kernels/
+    kernel = np.array(
+        [
+            [1/16, 2/16, 1/16],
+            [2/16, 4/16, 2/16],
+            [1/16, 2/16, 1/16]
+        ]
+    )
+    sharpenedImg = imgFormatted
+    for color in range(3):
+        sharpenedImg[:,:, color] = ndimage.convolve(imgFormatted[:, :, color], kernel, mode='reflect')
+    print(sharpenedImg)
+
+    
+    #plt.imshow(sharpenedImg)
+    #plt.show()
+    
+    #times 256 and convert to int for saving img
+    saveImg = (sharpenedImg * 256).astype(np.uint8)
+    im = Image.fromarray(saveImg)
+    im.save('testSavePIL.png')
+
 def main():
-    convolution2()
+    sharpenImgConvolution()
 
 main()
