@@ -1,7 +1,6 @@
 use std::{io, string};
 
 fn main() {
-
     ownership();
 }
 
@@ -163,11 +162,64 @@ fn ownership () {
         Reference and borrowing
 
         To avoid unwanted move, one can use reference (&). When passing
-        a variable through 
+        a variable to a function through parameter, pass the reference instead.
+        This way, a location of the data is used, and that will only trigger
+        a copy, not a move. And when the reference goes out of scope, the address
+        value gets crapped, but the data itself remains valid, because the variable 
+        that still owns the data is still valid (in scope).
+
+    let str:String = String::from("abc");
+    let num: usize = length_of_string(&str);
+    println!("{str} is of length {num}");
      */
-    println!("hello world");
-    
+    /*
+        Modifying a variable through a function
+
+        Have to ensure that the types are marked mutable in all places,
+        including var declaration, passing to function, and function definition
+    let mut str: String = String::from("hello ");
+    append_to_string(&mut str);
+    println!("appended str: {str}");
+     */
+
+    /*
+        Scope of a reference
+        The scope of a reference starts at declaration and ends at the last use.
+        One cannot declare an mutable reference after an immutable reference of the same variable.
+        This is to prevent data racing: one reference is used to read the data WHILE the 
+        other reference is used to write the data
+    let mut s: String = String::from("hello");
+    let s_ref: &String = &s;
+    let s_ref_mut: &mut String = &mut s;
+    println!("{s_ref}");
+     */
+
+    /*
+        Dangling Reference
+        A reference that points to freed memory cannot be returned. It will be reported at compile time.
+        We can, instead, return a String. Returning a value to another variable will
+        effectively transfer the ownership of the value, thus spare it from being
+        dropped once the previous owner goes out of scope.
+     */
+    let s: String = return_a_string();
+    println!("{s}");
+
 }
+
+fn return_a_string() -> String {
+    let str: String = String::from("hello world");
+    str
+}
+
+fn append_to_string(arg: &mut String) {
+    arg.push_str("appended");
+}
+
+
+fn length_of_string(arg: &String) -> usize {
+    arg.len()
+}
+
 
 fn ownnership_argument_drop (s: String) {
     println!("{s} will be dropped after this function ends");
