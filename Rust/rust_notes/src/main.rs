@@ -1,8 +1,30 @@
 use std::{io, string};
 
 fn main() {
-    ownership();
+    //ownership();
+    Using_Structs_Related_Data();
 }
+
+fn Using_Structs_Related_Data(){
+    /*
+        Define and instantiate a struct
+     */
+    struct  User {
+        active: bool,
+        username: String,
+        email: String
+    }
+
+    let mut bob:User = User {
+        active: true,
+        username: String::from("bobTheBuilder"),
+        email: String::from("bob@gmail.com"),
+    };
+
+    bob.email = String::from("bobNew@gmail.com");
+    println!("bob's email: {}",bob.email);
+}
+
 
 fn first_three_chapters() {
     /*
@@ -200,10 +222,47 @@ fn ownership () {
         We can, instead, return a String. Returning a value to another variable will
         effectively transfer the ownership of the value, thus spare it from being
         dropped once the previous owner goes out of scope.
-     */
+    
     let s: String = return_a_string();
     println!("{s}");
+    */
 
+    /*
+        Slice
+        A reference to a variable with starting index and the length of valid reference.
+        In the example of a String slice, it can reference a substring with specified starting and ending idnex.
+        in 
+     */
+    let str: String = String::from("Helloooo world");
+    let str_slice = first_word_in_string(&str);
+
+    println!("first word: {str_slice}");
+
+    /*
+        Index out of bound: 
+        Here we attempt to read memory outside the string, thus, index out of bounds.
+        Compiler won't recognize this, as it only check statically. As a result, run time error.
+     */
+    let str_short: String = String::from("hi");
+    let first_byte: u8 = str_short.as_bytes()[3];
+    println!("{first_byte}");
+
+}
+
+fn first_word_in_string(arg: &String) -> &str {
+    /*
+        The argument is a reference, since we don't want to copy the String object entirely.
+        The return is of type &str: a String Slice (a type of reference)
+        traversing through the String, we mark the the space as the ending of the first word.
+        Thus, when we find the first space, we return the reference slice from begining to the space
+     */
+    let bytes = arg.as_bytes();
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &arg[..i];
+        }
+    }
+    return &arg[..];
 }
 
 fn return_a_string() -> String {
