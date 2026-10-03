@@ -21,8 +21,92 @@ fn Using_Structs_Related_Data(){
         email: String::from("bob@gmail.com"),
     };
 
-    bob.email = String::from("bobNew@gmail.com");
-    println!("bob's email: {}",bob.email);
+    //Since bob contains complex data, assigning bob data to a 
+    //new struct instance will trigger moves, BUT only to those complex data fields.
+    //As a result, those complex fields touched by ..bob will no longer be accesible
+    //through bob. However, the rest of fields are still accessible.
+    //It appears, the move occurs field by field in a struct. 
+    let bob_new: User = User {
+        username: String::from("bob the new builder"),
+        ..bob
+    };
+    //after ass
+
+    //bob.email = String::from("bobNew@gmail.com");
+    //println!("bob's email: {}",bob.active);
+
+    /*
+        Print a struct
+        Since user defines a struct, Rust doesn't know by default how to print a struct instance.
+        We can leverage debug output format. This can be enabled by an outer attribute:
+
+
+     */
+    #[derive(Debug)]
+    struct Rectangle {
+        width: u32,
+        height: u32,
+    }
+
+    impl Rectangle {
+        fn area(&self) -> u32 {
+            self.width * self.height
+        }
+
+        fn can_hold(&self, to_rec: &Rectangle) -> bool {
+            self.height >= to_rec.height && self.width >= to_rec.width
+        }
+
+
+        /*
+            An associated function for a struct that is not a method:
+            Sometimes we would want to have such instance that doesn't need to know which struct instance it's working on
+            In times like constructor, it's job is to create an instance of a struct, thus it doesn't need an instance to begin with
+            
+        */
+
+        fn square(size: u32) -> Self {
+            Self { width: (size), height: (size) }
+        }
+    }
+
+    let sqr: Rectangle = Rectangle::square(5);
+
+    println!("Square's area is {}", sqr.area());
+
+    let rec1: Rectangle = Rectangle {
+        width: 30,
+        height: 2,
+    };
+
+    
+    let rec2: Rectangle = Rectangle {
+        width: 20,
+        height: 2,
+    };
+
+
+    let rec3: Rectangle = Rectangle {
+        width: 30,
+        height: 10,
+    };
+    /*
+        Method
+        Struct specific functions
+     */
+    println!("rec1 can hold rec2: {}", rec1.can_hold(&rec2));
+    println!("rec1 can hold rec3: {}", rec1.can_hold(&rec3));
+    
+
+    /*
+
+    //println!("rec1 is {rec1:?}");   //:? is a specifier that tells println! that we want to use an output format called debug
+    //Or we can print with dbg! macro, this will print to stderr, and it will take ownership of the expr
+    let rec1 = dbg!(rec1);
+    let num: u32 = rec1.width;
+     */
+
+
 }
 
 
